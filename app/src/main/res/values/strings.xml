@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_play_video_long" />
+    <string name="shortcut_play_video" />
+     <string name="app_name">youtube.v3</string>
+    <string name="video_thumbnail_description">Video Thumbnail</string>
+</resources>
