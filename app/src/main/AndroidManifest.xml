@@ -16,6 +16,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="YouTube V3"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+
         android:theme="@style/Theme.MyYoutube">
 
         <activity
@@ -23,6 +25,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
 
             </intent-filter>

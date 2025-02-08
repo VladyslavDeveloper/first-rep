@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,13 +53,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
     private static final int FIVE_MINUTES = 900;
+    private boolean isControlVisible = true;  // Инициализация переменной
+    private LinearLayout controlsLayout;
 
     private WebView webView;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer;
     private Handler handler;
     private boolean shouldCheckDuration = false;
     private boolean isLooping = false;
-    private LinearLayout controlsLayout;
+
     private boolean isTimerRunning = true;
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
     private float playbackSpeed = 1.0f;
@@ -95,6 +98,45 @@ public class MainActivity extends AppCompatActivity {
         startSpeedUpdateTimer();
 
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Если горизонтальная ориентация
+            continueActivity();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // Если вертикальная ориентация
+            continueActivity();
+        }
+    }
+
+    private void continueActivity() {
+        // Здесь продолжаем активность, например, обновляем элементы UI
+        toggleControlsVisibility();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // Восстанавливаем данные
+            isControlVisible = savedInstanceState.getBoolean("isControlVisible");
+
+            // Применяем состояние (например, показываем или скрываем элементы управления)
+            toggleControlsVisibility();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Сохраняем необходимые данные, например:
+        outState.putBoolean("isControlVisible", isControlVisible);
+    }
+
 
     public void initializeWebView() {
         WebSettings webSettings = webView.getSettings();
