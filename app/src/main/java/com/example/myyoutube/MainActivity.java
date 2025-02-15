@@ -98,23 +98,6 @@ public class MainActivity extends AppCompatActivity {
         startSpeedUpdateTimer();
 
     }
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Если горизонтальная ориентация
-            continueActivity();
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // Если вертикальная ориентация
-            continueActivity();
-        }
-    }
-
-    private void continueActivity() {
-        // Здесь продолжаем активность, например, обновляем элементы UI
-        toggleControlsVisibility();
-    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
