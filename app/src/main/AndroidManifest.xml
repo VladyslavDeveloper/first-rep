@@ -18,7 +18,7 @@
         android:label="YouTube V3"
         android:configChanges="orientation|keyboardHidden|screenSize"
 
-        android:theme="@style/Theme.MyYoutube">
+        android:theme="@style/Theme.Design.NoActionBar">
 
         <activity
             android:name=".MainActivity"
@@ -33,7 +33,8 @@
 
         <activity
             android:name=".FloatingActivity"
-            android:exported="false" /> <!-- Optional: set exported as needed -->
+            android:exported="false"
+            android:theme="@style/Theme.Design.NoActionBar"/> <!-- Optional: set exported as needed -->
 
         <!-- Other components such as services, receivers, etc. can be defined here -->
 

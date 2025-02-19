@@ -7,7 +7,7 @@
     <WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="729dp"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp" />
 
@@ -15,12 +15,10 @@
         android:id="@+id/video_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/controls"
         android:background="@android:color/black"
         android:visibility="gone"
         android:gravity="center">
 
-        <!-- Video player view -->
         <VideoView
             android:id="@+id/video_view"
             android:layout_width="match_parent"
@@ -28,7 +26,6 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true" />
 
-        <!-- Button to close video view -->
         <ImageButton
             android:id="@+id/btnCloseVideo"
             android:layout_width="wrap_content"
@@ -55,83 +52,82 @@
         android:importantForAccessibility="yes"
         android:padding="0dp"/>
 
-
-    <LinearLayout
-        android:id="@+id/controls"
+    <!-- Horizontal ScrollView for buttons -->
+    <HorizontalScrollView
+        android:id="@+id/controls_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:background="#27E1E0DF"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:background="#27E1E0DF">
 
-        <Button
-            android:id="@+id/btnSpeed"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/controls"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="⏩ "
-            android:textColor="#BBFD78" />
+            android:orientation="horizontal"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/btnSkip3min"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="⏭️"
-            android:textColor="#BBFD78" />
+            <Button
+                android:id="@+id/btnSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="⏩"
+                android:textColor="#BBFD78" />
 
-        <Button
-            android:id="@+id/btnLoop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="🔁"
-            android:textColor="#BBFD78" />
+            <Button
+                android:id="@+id/btnSkip3min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="⏭️"
+                android:textColor="#BBFD78" />
 
-        <!-- Added btnTimer button -->
+            <Button
+                android:id="@+id/btnLoop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="🔁"
+                android:textColor="#BBFD78" />
 
-        <Button
-            android:id="@+id/btnOpenFloating"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="🎧"
-            android:textColor="#BBFD78" />
+            <Button
+                android:id="@+id/btnVoiceSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="🎤"
+                android:textColor="#BBFD78" />
 
-        <Button
-            android:id="@+id/btnVoiceSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="🎤"
-            android:textColor="#BBFD78" />
+            <Button
+                android:id="@+id/btnOpenFloating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="🎧"
+                android:textColor="#BBFD78" />
 
-        <Button
-            android:id="@+id/btnTimer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="0"
-            android:backgroundTint="#5F6060"
-            android:padding="5dp"
-            android:text="⏰ "
-            android:textColor="#BBFD78" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/btnTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="⏰"
+                android:textColor="#BBFD78" />
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
 </RelativeLayout>
