@@ -291,10 +291,10 @@ public class MainActivity extends AppCompatActivity {
     private void cyclePlaybackSpeed() {
         switch ((int) playbackSpeed) {
             case 1:
-                playbackSpeed = 2.2f;
+                playbackSpeed = 2.0f;
                 break;
             case 2:
-                playbackSpeed = 3.0f;
+                playbackSpeed = 2.5f;
                 break;
             case 3:
                 playbackSpeed = 1.0f;
