@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     static final String PREF_URL = "url";
     // In both MainActivity and FloatingActivity
     public static final String PREF_SPEED = "playback_speed";
-
+    private SkipaAdd skipaAdd;
+    private ShowSkipDialog showSkipDialog ;
     private static final int ONE_MINUTE = 60;
     private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
@@ -74,11 +75,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         controlsLayout = findViewById(R.id.controls);
 
+
         webView = findViewById(R.id.webview);
         btnSpeed = findViewById(R.id.btnSpeed);
         btnSkip4sec = findViewById(R.id.btnSkip3min); // Renamed to reflect 3-minute skip
         btnLoop = findViewById(R.id.btnLoop);
         btnTimer = findViewById(R.id.btnTimer);
+
+        showSkipDialog = new ShowSkipDialog(this,webView);
+        skipaAdd = new SkipaAdd(this, webView);
+
 
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
 
@@ -165,13 +171,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void openYouTubeSearch(String query) {
-        // Launch YouTube with the search query
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/results?search_query=" + query));
-        startActivity(intent);
-    }
     private void saveLastVideoUrl(String url) {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -257,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkip4sec.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                showSkipTimeDialog();
+                showSkipDialog.showSkipTimeDialog();
                 return true;
             }
         });
@@ -294,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 playbackSpeed = 2.0f;
                 break;
             case 2:
-                playbackSpeed = 2.5f;
+                playbackSpeed = 3.0f;
                 break;
             case 3:
                 playbackSpeed = 1.0f;
@@ -305,73 +304,11 @@ public class MainActivity extends AppCompatActivity {
         applyPlaybackSpeed(playbackSpeed);
     }
 
-    private void skipVideo() {
-        webView.evaluateJavascript(
-                "(function() {" +
-                        "var video = document.querySelector('video');" +
-                        "if (video) {" +
-                        "return video.duration;" +
-                        "} else {" +
-                        "return 0;" +
-                        "}" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        try {
-                            double duration = Double.parseDouble(value);
-                            if (duration < 25) { // If video is shorter than 4 seconds
-                                // Skip forward 3 minutes (180 seconds)
-                                webView.evaluateJavascript(
-                                        "var video = document.querySelector('video');" +
-                                                "if (video) {" +
-                                                "var newTime = video.currentTime + 180;" + // Skip forward 3 minutes
-                                                "if (newTime < video.duration) {" +
-                                                "video.currentTime = newTime;" +
-                                                "} else {" +
-                                                "video.currentTime = video.duration;" +
-                                                "}" +
-                                                "}", null);
-                            } else {
-
-                            }
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "Error parsing video duration: " + e.getMessage());
-                        }
-                    }
-                });
-    }
 
 
 
 
-    private void showSkipTimeDialog() {
-        String[] skipOptions = {"1 Minute", "5 Minutes", "10 Minutes", "15 Minutes"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select Skip Time");
-        builder.setItems(skipOptions, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int skipTime = 0;
-                switch (which) {
-                    case 0:
-                        skipTime = ONE_MINUTE;
-                        break;
-                    case 1:
-                        skipTime = TWO_MINUTES;
-                        break;
-                    case 2:
-                        skipTime = THREE_MINUTES;
-                        break;
-                    case 3:
-                        skipTime = FIVE_MINUTES;
-                        break;
-                }
-                webView.evaluateJavascript("document.querySelector('video').currentTime += " + skipTime + ";", null);
 
-            }
-        });
-        builder.show();
-    }
 
     private void skipThreeMinutes() {
         webView.evaluateJavascript("document.querySelector('video').currentTime += 180;", null);
@@ -411,8 +348,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (shouldCheckDuration) {
-                    checkVideoDuration();
-                    skipVideo();
+                    skipaAdd.checkVideoDuration();
+                    skipaAdd.skipVideo();
                     saveLastVideoUrl(webView.getUrl());
                     handler.postDelayed(this, 1000); // Check every 3 seconds
                 }
@@ -420,54 +357,7 @@ public class MainActivity extends AppCompatActivity {
         }, 1000); // Initial delay of 3 seconds before first check
     }
 
-    private void checkVideoDuration() {
-        webView.evaluateJavascript(
-                "(function() {" +
-                        "var video = document.querySelector('video');" +
-                        "if (video) {" +
-                        "  return video.duration;" +
-                        "} else {" +
-                        "  return 0;" +
-                        "}" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        try {
-                            double duration = Double.parseDouble(value);
-                            if (duration > 0) {
-                                // Only if a valid video is present, attempt to skip ads
-                                checkAndSkipAds();
-                            }
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "Error parsing video duration: " + e.getMessage());
-                        }
-                    }
-                });
-    }
 
-    private void checkAndSkipAds() {
-        // Check and skip ads (if applicable)
-        webView.evaluateJavascript("javascript:(function() {" +
-                "const skipButton = document.querySelector('button[class*=\"ytp-ad-skip-button\"]');" +
-                "if (skipButton) {" +
-                "skipButton.click();" + // Clicking the skip ad button
-                "const video = document.querySelector('video');" +
-                "if (video) {" +
-                "video.currentTime += 1900; " + // Skip forward by 40 seconds
-                "return 'Реклама пропущена, видео перемотано на 1900 секунд';" +
-                "} else {" +
-                "return 'Видео не найдено, но реклама пропущена';" +
-                "}" +
-                "} else {" +
-                "return 'Кнопка пропуска рекламы не найдена';" +
-                "}" +
-                "})();", value -> {
-            if (value != null && !value.equals("null")) {
-
-            }
-        });
-
-    }
 
 
 
