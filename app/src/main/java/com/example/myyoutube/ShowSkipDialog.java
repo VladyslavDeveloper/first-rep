@@ -17,7 +17,7 @@ public class ShowSkipDialog {
     }
 
     public void showSkipTimeDialog() {
-        String[] skipOptions = {"1 Minute", "5 Minutes", "10 Minutes", "15 Minutes"};
+        String[] skipOptions = {"3 Minutes", "5 Minutes", "10 Minutes", "15 Minutes"};
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Select Skip Time");
         builder.setItems(skipOptions, new DialogInterface.OnClickListener() {
@@ -26,7 +26,7 @@ public class ShowSkipDialog {
                 int skipTime = 0;
                 switch (which) {
                     case 0:
-                        skipTime = 60;
+                        skipTime = 180;
                         break;
                     case 1:
                         skipTime = 300;
@@ -44,4 +44,8 @@ public class ShowSkipDialog {
         });
         builder.show();
     }
+    public void skipThreeMinutes() {
+        webView.evaluateJavascript("document.querySelector('video').currentTime += 60;", null);
+    }
+
 }

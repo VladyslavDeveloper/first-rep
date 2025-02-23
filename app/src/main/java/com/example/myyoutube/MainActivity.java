@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         btnSkip4sec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                skipThreeMinutes();
+                showSkipDialog.skipThreeMinutes();
             }
         });
 
@@ -307,13 +307,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-    private void skipThreeMinutes() {
-        webView.evaluateJavascript("document.querySelector('video').currentTime += 180;", null);
-    }
-
     private void savePlaybackSpeed(float speed) {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -351,10 +344,10 @@ public class MainActivity extends AppCompatActivity {
                     skipaAdd.checkVideoDuration();
                     skipaAdd.skipVideo();
                     saveLastVideoUrl(webView.getUrl());
-                    handler.postDelayed(this, 1000); // Check every 3 seconds
+                    handler.postDelayed(this, 1000);
                 }
             }
-        }, 1000); // Initial delay of 3 seconds before first check
+        }, 1000);
     }
 
 
