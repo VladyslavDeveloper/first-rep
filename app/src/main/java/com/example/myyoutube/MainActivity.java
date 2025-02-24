@@ -42,7 +42,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE = 101;
-    private static final int VOICE_SEARCH_REQUEST_CODE = 1000;
     private Button btnVoiceSearch;
     static final String PREFS_NAME = "WebViewPrefs";
     static final String PREF_URL = "url";
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout controlsLayout;
 
     private WebView webView;
+    private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer;
     private Handler handler;
     private boolean shouldCheckDuration = false;
@@ -84,14 +84,14 @@ public class MainActivity extends AppCompatActivity {
 
         showSkipDialog = new ShowSkipDialog(this,webView);
         skipaAdd = new SkipaAdd(this, webView);
-
+        voiceSearch = new VoiceSearch(this,webView);
 
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
 
         btnVoiceSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startVoiceSearch();
+                voiceSearch.startVoiceSearch();
             }
         });
 
@@ -158,18 +158,7 @@ public class MainActivity extends AppCompatActivity {
         playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
         webView.loadUrl(lastVideoUrl);
     }
-    private void startVoiceSearch() {
-        // Create an Intent for voice search
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something to search on YouTube");
 
-        try {
-            startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Speech recognition is not supported on this device", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void saveLastVideoUrl(String url) {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -304,6 +293,11 @@ public class MainActivity extends AppCompatActivity {
         applyPlaybackSpeed(playbackSpeed);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        voiceSearch.handleActivityResult(requestCode, resultCode, data);
+    }
 
 
 
@@ -376,30 +370,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        // Check if the result is from the voice search request
-        if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // Get the voice search results from the intent
-            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-            if (results != null && !results.isEmpty()) {
-                // Get the first result from the voice search
-                String query = results.get(0);
-
-                // Load the YouTube search URL in the WebView
-                WebView webView = findViewById(R.id.webview); // Reference to the WebView
-                String searchUrl = "https://www.youtube.com/results?search_query=" + query;
-
-                // Load the search URL in the WebView
-                webView.loadUrl(searchUrl);
-            } else {
-                Toast.makeText(this, "No voice input detected", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void startFloatingActivity() {
         String currentUrl = webView.getUrl(); // Получаем текущий URL из WebView
