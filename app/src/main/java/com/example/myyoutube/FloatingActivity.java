@@ -1,4 +1,5 @@
 package com.example.myyoutube;
+import android.os.PowerManager;
 
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -50,6 +51,11 @@ public class FloatingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag");
+        wakeLock.acquire();
+
 
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
