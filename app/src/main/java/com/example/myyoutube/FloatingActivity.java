@@ -54,6 +54,12 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String TAG = "FloatingActivity";
     private static final int STATIC_WIDTH = 400; // Static width in dp
     private static final float DEFAULT_HEIGHT_PERCENT = 0.4f; // 40% of screen height
+    
+    // Touch handling variables
+    private float initialTouchX;
+    private float initialTouchY;
+    private int initialWidth;
+    private int initialHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +103,7 @@ public class FloatingActivity extends AppCompatActivity {
         // Setup size control
         setupSizeControl();
 
-        // Set touch listener for moving and resizing the window
+        // Set touch listener for moving the window
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -105,37 +111,19 @@ public class FloatingActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_DOWN:
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
-                        initialWidth = params.width;
-                        initialHeight = params.height;
-                        
-                        // Check if touch is in resize area (bottom-right corner)
-                        isResizing = isTouchInResizeArea(event.getX(), event.getY(), v.getWidth(), v.getHeight());
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        if (isResizing) {
-                            // Handle resizing
-                            int newWidth = initialWidth + (int)(event.getRawX() - initialTouchX);
-                            int newHeight = initialHeight + (int)(event.getRawY() - initialTouchY);
-                            
-                            // Ensure minimum size
-                            params.width = Math.max(200, newWidth);
-                            params.height = Math.max(150, newHeight);
-                            
-                            windowManager.updateViewLayout(view, params);
-                        } else {
-                            // Handle moving
-                            params.x += (int)(event.getRawX() - initialTouchX);
-                            params.y += (int)(event.getRawY() - initialTouchY);
-                            windowManager.updateViewLayout(view, params);
-                            
-                            initialTouchX = event.getRawX();
-                            initialTouchY = event.getRawY();
-                        }
+                        // Handle moving
+                        params.x += (int)(event.getRawX() - initialTouchX);
+                        params.y += (int)(event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(view, params);
+                        
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
                         return true;
 
                     case MotionEvent.ACTION_UP:
-                        isResizing = false;
                         return true;
                 }
                 return false;
