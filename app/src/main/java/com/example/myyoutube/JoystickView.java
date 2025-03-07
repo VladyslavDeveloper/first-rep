@@ -38,7 +38,7 @@ public class JoystickView extends View {
     private void init() {
         basePaint = new Paint();
         basePaint.setColor(Color.GRAY);
-        basePaint.setAlpha(100);
+        basePaint.setAlpha(50);
         basePaint.setStyle(Paint.Style.FILL);
         basePaint.setAntiAlias(true);
 

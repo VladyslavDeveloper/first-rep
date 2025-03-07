@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
             );
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            btnRotate.setText("🔄"); // Rotate icon for "switch to landscape"
+            btnRotate.setText("📱"); // Rotate icon for "switch to landscape"
             
             // Exit fullscreen in portrait
             webView.evaluateJavascript(
