@@ -68,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
     private float playbackSpeed = 1.0f;
     private final int speedUpdateInterval = 2000;
 
+    private JoystickView joystickView;
+    private static final float MAX_PLAYBACK_RATE = 3.0f;
+    private static final float REWIND_MULTIPLIER = 10.0f;
+    private Handler joystickHandler;
+    private Runnable joystickRunnable;
+    private boolean isJoystickActive = false;
+
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        joystickView = findViewById(R.id.joystickView);
+        setupJoystickControl();
 
         // Initialize the WebView and load last saved URL
         initializeWebView();
@@ -386,6 +394,64 @@ public class MainActivity extends AppCompatActivity {
             webView.goBack(); // Go back to the previous page in WebView history
         } else {
             super.onBackPressed(); // Exit the activity if there's no history
+        }
+    }
+
+    private void setupJoystickControl() {
+        joystickHandler = new Handler();
+        joystickRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isJoystickActive) {
+                    webView.evaluateJavascript(
+                        "var video = document.querySelector('video');" +
+                        "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
+                        null
+                    );
+                    joystickHandler.postDelayed(this, 100); // Update every 100ms
+                }
+            }
+        };
+
+        joystickView.setJoystickListener(new JoystickView.JoystickListener() {
+            @Override
+            public void onJoystickMoved(float xPercent, float yPercent) {
+                if (!isJoystickActive) {
+                    isJoystickActive = true;
+                    joystickHandler.post(joystickRunnable);
+                }
+
+                // X-axis controls seeking speed
+                float seekValue = xPercent * REWIND_MULTIPLIER;
+                
+                webView.evaluateJavascript(
+                    "window.joystickSeekValue = " + seekValue + ";" +
+                    "var video = document.querySelector('video');" +
+                    "if(video) {" +
+                    "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
+                    "}",
+                    null
+                );
+            }
+
+            @Override
+            public void onJoystickReleased() {
+                isJoystickActive = false;
+                webView.evaluateJavascript(
+                    "window.joystickSeekValue = 0;" +
+                    "var video = document.querySelector('video');" +
+                    "if(video) { video.playbackRate = 1.0; }",
+                    null
+                );
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (joystickHandler != null) {
+            joystickHandler.removeCallbacks(joystickRunnable);
         }
     }
 }
