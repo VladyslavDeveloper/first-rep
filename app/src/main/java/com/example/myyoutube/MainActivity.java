@@ -154,18 +154,40 @@ public class MainActivity extends AppCompatActivity {
                 saveLastVideoUrl(url);
                 applyPlaybackSpeed(playbackSpeed);
 
-                // Automatically disable subtitles
+                // More aggressive subtitle disabling
                 webView.evaluateJavascript(
                     "function disableSubtitles() {" +
-                    "  var subtitleButton = document.querySelector('.ytp-subtitles-button');" +
-                    "  if(subtitleButton && subtitleButton.getAttribute('aria-pressed') === 'true') {" +
-                    "    subtitleButton.click();" +
+                    // Method 1: Direct HTML5 video track disabling
+                    "  var video = document.querySelector('video');" +
+                    "  if(video && video.textTracks) {" +
+                    "    for(var i = 0; i < video.textTracks.length; i++) {" +
+                    "      video.textTracks[i].mode = 'disabled';" +
+                    "    }" +
+                    "  }" +
+                    // Method 2: YouTube specific button
+                    "  var ccButton = document.querySelector('.ytp-subtitles-button');" +
+                    "  if(ccButton && ccButton.getAttribute('aria-pressed') === 'true') {" +
+                    "    ccButton.click();" +
+                    "  }" +
+                    // Method 3: YouTube settings menu
+                    "  var subtitlesMenuItem = document.querySelector('[role=\"menuitem\"][aria-label*=\"subtitles\"]');" +
+                    "  if(subtitlesMenuItem) {" +
+                    "    subtitlesMenuItem.click();" +
+                    "  }" +
+                    // Method 4: Remove caption elements
+                    "  var captionWindow = document.querySelector('.ytp-caption-window-container');" +
+                    "  if(captionWindow) {" +
+                    "    captionWindow.style.display = 'none';" +
                     "  }" +
                     "}" +
-                    // Initial call
+                    // Run immediately
                     "disableSubtitles();" +
-                    // Check periodically for dynamic loading
-                    "setInterval(disableSubtitles, 1000);",
+                    // Run periodically
+                    "setInterval(disableSubtitles, 500);" +
+                    // Also run when video source changes
+                    "if(video) {" +
+                    "  video.addEventListener('loadeddata', disableSubtitles);" +
+                    "}",
                     null
                 );
             }
