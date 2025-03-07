@@ -52,11 +52,8 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "MyYouTubePrefs";
     private static final String PREF_URL = "LastVideoUrl";
     private static final String TAG = "FloatingActivity";
-    private static final int RESIZE_HANDLE_SIZE = 48; // dp
     private static final int STATIC_WIDTH = 400; // Static width in dp
-    private boolean isResizing = false;
-    private float initialTouchX, initialTouchY;
-    private int initialWidth, initialHeight;
+    private static final float DEFAULT_HEIGHT_PERCENT = 0.4f; // 40% of screen height
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +66,11 @@ public class FloatingActivity extends AppCompatActivity {
 
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        
         params = new WindowManager.LayoutParams(
                 (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density), // Convert dp to pixels
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                (int) (screenHeight * DEFAULT_HEIGHT_PERCENT), // Set default height to 40% of screen
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
@@ -334,7 +333,7 @@ public class FloatingActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    float scale = (progress + 20) / 100f; // Ensure minimum size of 20%
+                    float scale = Math.max(0.2f, progress / 100f); // Minimum 20% height
                     params.height = (int) (screenHeight * scale);
                     windowManager.updateViewLayout(linearLayout1, params);
                 }
@@ -356,7 +355,7 @@ public class FloatingActivity extends AppCompatActivity {
         if (isSizeControlVisible) {
             int screenHeight = getResources().getDisplayMetrics().heightPixels;
             float currentScale = (float) params.height / screenHeight;
-            sizeSeekBar.setProgress((int) (currentScale * 100) - 20);
+            sizeSeekBar.setProgress((int) (currentScale * 100));
         }
     }
 
