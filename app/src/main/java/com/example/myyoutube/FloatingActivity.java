@@ -137,9 +137,8 @@ public class FloatingActivity extends AppCompatActivity {
             finish();
         });
         view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
-         view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
+        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
-        view.findViewById(R.id.btnResize).setOnClickListener(v -> toggleSizeControl());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
 
         // Start duration check
