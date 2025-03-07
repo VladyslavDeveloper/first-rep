@@ -22,6 +22,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,9 @@ import java.util.ArrayList;
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;
     private WebView webView;
+    private LinearLayout sizeControlLayout;
+    private SeekBar sizeSeekBar;
+    private boolean isSizeControlVisible = false;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
@@ -83,10 +87,15 @@ public class FloatingActivity extends AppCompatActivity {
         // Initialize UI elements
         linearLayout1 = view.findViewById(R.id.linearLayout1);
         webView = view.findViewById(R.id.webView);
+        sizeControlLayout = view.findViewById(R.id.sizeControlLayout);
+        sizeSeekBar = view.findViewById(R.id.sizeSeekBar);
 
         // Setup WebView
         initializeWebView();
         loadVideoUrlFromIntent();
+
+        // Setup size control
+        setupSizeControl();
 
         // Set touch listener for moving and resizing the window
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -142,7 +151,7 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
          view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
-        view.findViewById(R.id.btnResize).setOnClickListener(v -> toggleSize());
+        view.findViewById(R.id.btnResize).setOnClickListener(v -> toggleSizeControl());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
 
         // Start duration check
@@ -317,33 +326,39 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
 
-    private void toggleSize() {
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+    private void setupSizeControl() {
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        sizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    float scale = (progress + 20) / 100f; // Ensure minimum size of 20%
+                    params.width = (int) (screenWidth * scale);
+                    params.height = (int) (screenHeight * scale);
+                    windowManager.updateViewLayout(linearLayout1, params);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
+    private void toggleSizeControl() {
+        isSizeControlVisible = !isSizeControlVisible;
+        sizeControlLayout.setVisibility(isSizeControlVisible ? View.VISIBLE : View.GONE);
         
-        currentSizeState = (currentSizeState + 1) % 4;
-        
-        switch (currentSizeState) {
-            case 0: // Small size
-                params.width = screenWidth / 2;
-                params.height = screenHeight / 3;
-                break;
-            case 1: // Medium size
-                params.width = (int)(screenWidth * 0.75);
-                params.height = screenHeight / 2;
-                break;
-            case 2: // Large size
-                params.width = screenWidth;
-                params.height = (int)(screenHeight * 0.75);
-                break;
-            case 3: // Full screen
-                params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                params.height = WindowManager.LayoutParams.MATCH_PARENT;
-                break;
+        // Update seek bar progress based on current size
+        if (isSizeControlVisible) {
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            float currentScale = (float) params.width / screenWidth;
+            sizeSeekBar.setProgress((int) (currentScale * 100) - 20);
         }
-        
-        windowManager.updateViewLayout(linearLayout1, params);
-        isFullScreen = (currentSizeState == 3);
     }
 
     private boolean isTouchInResizeArea(float x, float y, int viewWidth, int viewHeight) {
