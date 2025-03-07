@@ -36,6 +36,7 @@ public class FloatingActivity extends AppCompatActivity {
     private WindowManager.LayoutParams params;
     private float playbackSpeed = 1.0f; // Default playback speed
 
+    private int currentSizeState = 0; // 0: small, 1: medium, 2: large, 3: full screen
     private boolean isFullScreen = false; // Track layout state
     private int skipTime = 180; // Default skip time (3 minutes)
     private boolean isLooping = false;
@@ -302,17 +303,32 @@ public class FloatingActivity extends AppCompatActivity {
 
 
     private void toggleSize() {
-        if (isFullScreen) {
-            int newHeight = (int) (100 * getResources().getDisplayMetrics().density);
-            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            params.height = newHeight;
-        } else {
-            // Set to full screen
-            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        
+        currentSizeState = (currentSizeState + 1) % 4;
+        
+        switch (currentSizeState) {
+            case 0: // Small size
+                params.width = screenWidth / 2;
+                params.height = screenHeight / 3;
+                break;
+            case 1: // Medium size
+                params.width = (int)(screenWidth * 0.75);
+                params.height = screenHeight / 2;
+                break;
+            case 2: // Large size
+                params.width = screenWidth;
+                params.height = (int)(screenHeight * 0.75);
+                break;
+            case 3: // Full screen
+                params.width = WindowManager.LayoutParams.MATCH_PARENT;
+                params.height = WindowManager.LayoutParams.MATCH_PARENT;
+                break;
         }
+        
         windowManager.updateViewLayout(linearLayout1, params);
-        isFullScreen = !isFullScreen;
+        isFullScreen = (currentSizeState == 3);
     }
 
 
