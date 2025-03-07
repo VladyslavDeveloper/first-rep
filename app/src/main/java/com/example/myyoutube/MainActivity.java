@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.pm.ActivityInfo;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
     private VoiceSearch voiceSearch;
-    private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer;
+    private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Handler handler;
     private boolean shouldCheckDuration = false;
     private boolean isLooping = false;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     private Runnable joystickRunnable;
     private boolean isJoystickActive = false;
 
+    private boolean isLandscape = false;
+
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +85,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         controlsLayout = findViewById(R.id.controls);
 
-
         webView = findViewById(R.id.webview);
         btnSpeed = findViewById(R.id.btnSpeed);
-        btnSkip4sec = findViewById(R.id.btnSkip3min); // Renamed to reflect 3-minute skip
+        btnSkip4sec = findViewById(R.id.btnSkip3min);
         btnLoop = findViewById(R.id.btnLoop);
         btnTimer = findViewById(R.id.btnTimer);
+        btnRotate = findViewById(R.id.btnRotate);
 
         showSkipDialog = new ShowSkipDialog(this,webView);
         skipaAdd = new SkipaAdd(this, webView);
@@ -133,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         // Сохраняем необходимые данные, например:
         outState.putBoolean("isControlVisible", isControlVisible);
     }
-
 
     public void initializeWebView() {
         WebSettings webSettings = webView.getSettings();
@@ -193,17 +195,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
         // Load the last saved URL and playback speed
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String lastVideoUrl = preferences.getString(PREF_URL, "http://www.youtube.com");
         playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
         webView.loadUrl(lastVideoUrl);
     }
-
 
     private void saveLastVideoUrl(String url) {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -223,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnToggleControls = findViewById(R.id.btnToggleControls);
 
-// Initialize a flag to distinguish between move and click
+        // Initialize a flag to distinguish between move and click
         final long[] downTime = new long[1];
 
         btnToggleControls.setOnTouchListener(new View.OnTouchListener() {
@@ -269,8 +266,6 @@ public class MainActivity extends AppCompatActivity {
                 toggleControlsVisibility();
             }
         });
-
-
 
         btnSkip4sec.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,6 +314,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnRotate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleOrientation();
+            }
+        });
     }
 
     private void cyclePlaybackSpeed() {
@@ -343,8 +345,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         voiceSearch.handleActivityResult(requestCode, resultCode, data);
     }
-
-
 
     private void savePlaybackSpeed(float speed) {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -389,10 +389,6 @@ public class MainActivity extends AppCompatActivity {
         }, 1000);
     }
 
-
-
-
-
     private void toggleControlsVisibility() {
         if (controlsLayout.getVisibility() == View.VISIBLE) {
             controlsLayout.setVisibility(View.GONE);
@@ -417,15 +413,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void startFloatingActivity() {
         String currentUrl = webView.getUrl(); // Получаем текущий URL из WebView
         Intent intent = new Intent(this, FloatingActivity.class);
         intent.putExtra("video_url", currentUrl); // Передаем URL в Intent
         startActivity(intent);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -491,6 +484,47 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (joystickHandler != null) {
             joystickHandler.removeCallbacks(joystickRunnable);
+        }
+    }
+
+    private void toggleOrientation() {
+        isLandscape = !isLandscape;
+        if (isLandscape) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            btnRotate.setText("📱"); // Phone icon for "return to portrait"
+            
+            // Make video fullscreen in landscape
+            webView.evaluateJavascript(
+                "var fullscreenButton = document.querySelector('.ytp-fullscreen-button');" +
+                "if(fullscreenButton && !document.fullscreenElement) {" +
+                "  fullscreenButton.click();" +
+                "}",
+                null
+            );
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            btnRotate.setText("🔄"); // Rotate icon for "switch to landscape"
+            
+            // Exit fullscreen in portrait
+            webView.evaluateJavascript(
+                "var fullscreenButton = document.querySelector('.ytp-fullscreen-button');" +
+                "if(fullscreenButton && document.fullscreenElement) {" +
+                "  fullscreenButton.click();" +
+                "}",
+                null
+            );
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            isLandscape = true;
+            btnRotate.setText("📱");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            isLandscape = false;
+            btnRotate.setText("🔄");
         }
     }
 }
