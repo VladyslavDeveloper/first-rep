@@ -396,8 +396,10 @@ public class MainActivity extends AppCompatActivity {
     private void toggleControlsVisibility() {
         if (controlsLayout.getVisibility() == View.VISIBLE) {
             controlsLayout.setVisibility(View.GONE);
+            joystickView.setVisibility(View.GONE);
         } else {
             controlsLayout.setVisibility(View.VISIBLE);
+            joystickView.setVisibility(View.VISIBLE);
         }
     }
 
