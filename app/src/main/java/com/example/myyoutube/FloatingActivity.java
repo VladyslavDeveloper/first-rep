@@ -320,7 +320,7 @@ public class FloatingActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    float scale = Math.max(0.2f, progress / 100f); // Minimum 20% height
+                    float scale = Math.max(0.1f, progress / 100f);
                     params.height = (int) (screenHeight * scale);
                     windowManager.updateViewLayout(linearLayout1, params);
                 }
