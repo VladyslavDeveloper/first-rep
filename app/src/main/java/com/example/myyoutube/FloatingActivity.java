@@ -53,6 +53,7 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String PREF_URL = "LastVideoUrl";
     private static final String TAG = "FloatingActivity";
     private static final int RESIZE_HANDLE_SIZE = 48; // dp
+    private static final int STATIC_WIDTH = 400; // Static width in dp
     private boolean isResizing = false;
     private float initialTouchX, initialTouchY;
     private int initialWidth, initialHeight;
@@ -69,7 +70,7 @@ public class FloatingActivity extends AppCompatActivity {
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density), // Convert dp to pixels
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
@@ -327,7 +328,6 @@ public class FloatingActivity extends AppCompatActivity {
 
 
     private void setupSizeControl() {
-        int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
 
         sizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -335,7 +335,6 @@ public class FloatingActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     float scale = (progress + 20) / 100f; // Ensure minimum size of 20%
-                    params.width = (int) (screenWidth * scale);
                     params.height = (int) (screenHeight * scale);
                     windowManager.updateViewLayout(linearLayout1, params);
                 }
@@ -353,17 +352,16 @@ public class FloatingActivity extends AppCompatActivity {
         isSizeControlVisible = !isSizeControlVisible;
         sizeControlLayout.setVisibility(isSizeControlVisible ? View.VISIBLE : View.GONE);
         
-        // Update seek bar progress based on current size
+        // Update seek bar progress based on current height
         if (isSizeControlVisible) {
-            int screenWidth = getResources().getDisplayMetrics().widthPixels;
-            float currentScale = (float) params.width / screenWidth;
+            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+            float currentScale = (float) params.height / screenHeight;
             sizeSeekBar.setProgress((int) (currentScale * 100) - 20);
         }
     }
 
     private boolean isTouchInResizeArea(float x, float y, int viewWidth, int viewHeight) {
-        float resizeHandleSize = RESIZE_HANDLE_SIZE * getResources().getDisplayMetrics().density;
-        return x >= viewWidth - resizeHandleSize && y >= viewHeight - resizeHandleSize;
+        return false; // Disable resize handle
     }
 
     @Override
