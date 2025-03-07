@@ -524,7 +524,7 @@ public class MainActivity extends AppCompatActivity {
             btnRotate.setText("📱");
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             isLandscape = false;
-            btnRotate.setText("🔄");
+            btnRotate.setText("📱");
         }
     }
 }
