@@ -153,6 +153,21 @@ public class MainActivity extends AppCompatActivity {
                 startDurationCheck();
                 saveLastVideoUrl(url);
                 applyPlaybackSpeed(playbackSpeed);
+
+                // Automatically disable subtitles
+                webView.evaluateJavascript(
+                    "function disableSubtitles() {" +
+                    "  var subtitleButton = document.querySelector('.ytp-subtitles-button');" +
+                    "  if(subtitleButton && subtitleButton.getAttribute('aria-pressed') === 'true') {" +
+                    "    subtitleButton.click();" +
+                    "  }" +
+                    "}" +
+                    // Initial call
+                    "disableSubtitles();" +
+                    // Check periodically for dynamic loading
+                    "setInterval(disableSubtitles, 1000);",
+                    null
+                );
             }
         });
 
