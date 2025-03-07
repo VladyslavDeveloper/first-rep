@@ -48,6 +48,10 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "MyYouTubePrefs";
     private static final String PREF_URL = "LastVideoUrl";
     private static final String TAG = "FloatingActivity";
+    private static final int RESIZE_HANDLE_SIZE = 48; // dp
+    private boolean isResizing = false;
+    private float initialTouchX, initialTouchY;
+    private int initialWidth, initialHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,34 +88,45 @@ public class FloatingActivity extends AppCompatActivity {
         initializeWebView();
         loadVideoUrlFromIntent();
 
-        // Set touch listener for moving the window
+        // Set touch listener for moving and resizing the window
         view.setOnTouchListener(new View.OnTouchListener() {
-            private float initialTouchX, initialTouchY;
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
+                        initialWidth = params.width;
+                        initialHeight = params.height;
+                        
+                        // Check if touch is in resize area (bottom-right corner)
+                        isResizing = isTouchInResizeArea(event.getX(), event.getY(), v.getWidth(), v.getHeight());
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        // Calculate the distance moved
-                        float deltaX = event.getRawX() - initialTouchX;
-                        float deltaY = event.getRawY() - initialTouchY;
+                        if (isResizing) {
+                            // Handle resizing
+                            int newWidth = initialWidth + (int)(event.getRawX() - initialTouchX);
+                            int newHeight = initialHeight + (int)(event.getRawY() - initialTouchY);
+                            
+                            // Ensure minimum size
+                            params.width = Math.max(200, newWidth);
+                            params.height = Math.max(150, newHeight);
+                            
+                            windowManager.updateViewLayout(view, params);
+                        } else {
+                            // Handle moving
+                            params.x += (int)(event.getRawX() - initialTouchX);
+                            params.y += (int)(event.getRawY() - initialTouchY);
+                            windowManager.updateViewLayout(view, params);
+                            
+                            initialTouchX = event.getRawX();
+                            initialTouchY = event.getRawY();
+                        }
+                        return true;
 
-                        // Update the window position
-                        params.x += deltaX;
-                        params.y += deltaY;
-
-                        // Update the view layout with the new position
-                        windowManager.updateViewLayout(view, params);
-
-                        // Update the initial touch point for the next move
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-
+                    case MotionEvent.ACTION_UP:
+                        isResizing = false;
                         return true;
                 }
                 return false;
@@ -331,6 +346,10 @@ public class FloatingActivity extends AppCompatActivity {
         isFullScreen = (currentSizeState == 3);
     }
 
+    private boolean isTouchInResizeArea(float x, float y, int viewWidth, int viewHeight) {
+        float resizeHandleSize = RESIZE_HANDLE_SIZE * getResources().getDisplayMetrics().density;
+        return x >= viewWidth - resizeHandleSize && y >= viewHeight - resizeHandleSize;
+    }
 
     @Override
     public void onBackPressed() {
