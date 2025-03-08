@@ -384,143 +384,18 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
     private void downloadCurrentVideo() {
-        webView.evaluateJavascript(
-            "(function() {" +
-            "    try {" +
-            "        var videoData = ytplayer.config.args.raw_player_response.streamingData.formats;" +
-            "        if (videoData && videoData.length > 0) {" +
-            "            var highestQuality = videoData.reduce(function(prev, current) {" +
-            "                return (prev.height > current.height) ? prev : current;" +
-            "            });" +
-            "            return JSON.stringify({" +
-            "                url: highestQuality.url," +
-            "                title: document.title," +
-            "                quality: highestQuality.qualityLabel" +
-            "            });" +
-            "        }" +
-            "        return '';" +
-            "    } catch (e) {" +
-            "        // Try alternative method" +
-            "        try {" +
-            "            var scripts = document.getElementsByTagName('script');" +
-            "            for(var i = 0; i < scripts.length; i++) {" +
-            "                var text = scripts[i].text;" +
-            "                if(text.includes('streamingData')) {" +
-            "                    var match = text.match(/\"url\":\"([^\"]+)\"/);" +
-            "                    if(match && match[1]) {" +
-            "                        return JSON.stringify({" +
-            "                            url: match[1].replace(/\\\\u0026/g, '&')," +
-            "                            title: document.title," +
-            "                            quality: 'HD'" +
-            "                        });" +
-            "                    }" +
-            "                }" +
-            "            }" +
-            "        } catch(e2) {}" +
-            "        return '';" +
-            "    }" +
-            "})();",
-            new ValueCallback<String>() {
-                @Override
-                public void onReceiveValue(String value) {
-                    try {
-                        if (value != null && !value.equals("null") && !value.equals("") && !value.equals("[]")) {
-                            // Parse the JSON response
-                            String url = value;
-                            if (url.contains("\"url\":")) {
-                                url = url.substring(url.indexOf("\"url\":\"") + 7);
-                                url = url.substring(0, url.indexOf("\""));
-                                url = url.replace("\\u0026", "&");
-                            }
-                            
-                            if (!url.isEmpty() && url.startsWith("http")) {
-                                startDownload(url);
-                            } else {
-                                showDownloadError();
-                            }
-                        } else {
-                            // Try alternative method for embedded videos
-                            webView.evaluateJavascript(
-                                "(function() {" +
-                                "    var video = document.querySelector('video');" +
-                                "    if(video && video.src) {" +
-                                "        return video.src;" +
-                                "    }" +
-                                "    return '';" +
-                                "})();",
-                                new ValueCallback<String>() {
-                                    @Override
-                                    public void onReceiveValue(String directUrl) {
-                                        if (directUrl != null && !directUrl.equals("null") && !directUrl.equals("\"\"")) {
-                                            directUrl = directUrl.replace("\"", "");
-                                            startDownload(directUrl);
-                                        } else {
-                                            showDownloadError();
-                                        }
-                                    }
-                                }
-                            );
-                        }
-                    } catch (Exception e) {
-                        showDownloadError();
-                    }
-                }
+        String currentUrl = webView.getUrl();
+        if (currentUrl != null && currentUrl.contains("youtube.com/watch?v=")) {
+            String videoId = currentUrl.split("v=")[1];
+            if (videoId.contains("&")) {
+                videoId = videoId.split("&")[0];
             }
-        );
-    }
-
-    private void startDownload(String videoUrl) {
-        try {
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
-            String fileName = "video_" + System.currentTimeMillis() + ".mp4";
-            request.setTitle("Downloading Video");
-            request.setDescription("Downloading video");
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-            request.allowScanningByMediaScanner();
-            request.setAllowedOverMetered(true);
-            request.setAllowedOverRoaming(true);
-
-            // Add necessary headers
-            request.addRequestHeader("User-Agent", "Mozilla/5.0");
-            request.addRequestHeader("Accept", "*/*");
-            request.addRequestHeader("Accept-Encoding", "identity;q=1, *;q=0");
-            request.addRequestHeader("Range", "bytes=0-");
-
-            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            if (downloadManager != null) {
-                downloadManager.enqueue(request);
-                Toast.makeText(this, "Download started - check notification", Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception e) {
-            showDownloadError();
+            String downloadUrl = "https://www.y2mate.com/youtube/" + videoId;
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+            startActivity(browserIntent);
+        } else {
+            Toast.makeText(this, "Please open a YouTube video first", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void showDownloadError() {
-        runOnUiThread(() -> {
-            new AlertDialog.Builder(this)
-                .setTitle("Download Error")
-                .setMessage("Could not download the video. This might be because:\n\n" +
-                          "1. The video is protected\n" +
-                          "2. You need to grant storage permissions\n" +
-                          "3. Your device storage is full\n\n" +
-                          "Try opening the video in full YouTube app first.")
-                .setPositiveButton("Open in YouTube", (dialog, which) -> {
-                    try {
-                        String currentUrl = webView.getUrl();
-                        if (currentUrl != null && currentUrl.contains("youtube.com")) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentUrl));
-                            intent.setPackage("com.google.android.youtube");
-                            startActivity(intent);
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(this, "Could not open YouTube app", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("OK", null)
-                .show();
-        });
     }
 
 }
