@@ -226,9 +226,27 @@ public class FloatingActivity extends AppCompatActivity {
         String videoUrl = getIntent().getStringExtra("video_url");
         if (videoUrl != null && !videoUrl.isEmpty()) {
             if (videoUrl.contains("googlevideo.com/videoplayback")) {
+                // Extract title from URL parameters
+                String title = "";
+                if (videoUrl.contains("title=")) {
+                    try {
+                        String[] params = videoUrl.split("&");
+                        for (String param : params) {
+                            if (param.startsWith("title=")) {
+                                title = param.substring(6).replace("+", " ");
+                                title = java.net.URLDecoder.decode(title, "UTF-8");
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        title = "Video";
+                    }
+                }
+                
                 // For direct video URLs, create a custom HTML page with video player
                 String customHtml = "<html><body style='margin:0; padding:0; background:black;'>" +
-                                  "<video style='width:100%; height:100%;' controls autoplay>" +
+                                  "<div style='color:white; padding:10px; font-family:Arial;'>" + title + "</div>" +
+                                  "<video style='width:100%; height:calc(100% - 40px);' controls autoplay>" +
                                   "<source src='" + videoUrl + "' type='video/mp4'>" +
                                   "</video></body></html>";
                 webView.loadData(customHtml, "text/html", "UTF-8");
