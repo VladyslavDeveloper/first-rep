@@ -431,13 +431,8 @@ public class FloatingActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error starting download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else if (currentUrl != null && currentUrl.contains("youtube.com/watch?v=")) {
-            String videoId = currentUrl.split("v=")[1];
-            if (videoId.contains("&")) {
-                videoId = videoId.split("&")[1];
-            }
-            String downloadUrl = "https://www.y2mate.com/youtube/" + videoId;
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
-            startActivity(browserIntent);
+            // Open yt1s.com directly in WebView
+            webView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
         } else {
             Toast.makeText(this, "Please open a YouTube video first", Toast.LENGTH_SHORT).show();
         }
