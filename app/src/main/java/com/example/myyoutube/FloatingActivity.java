@@ -408,27 +408,28 @@ public class FloatingActivity extends AppCompatActivity {
     private void downloadCurrentVideo() {
         String currentUrl = getIntent().getStringExtra("video_url");
 
-        // Handle direct video URLs
         if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            // Load the video URL in the current player
             loadVideoInPlayer(currentUrl);
             Toast.makeText(this, "Loading video...", Toast.LENGTH_SHORT).show();
         } else {
             try {
-                // Encode the current URL and append it to yt1s.com URL
+                // Encode the video URL
                 String encodedUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
-                String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4?q=" + encodedUrl;
+
+                // Construct the SaveFrom.net URL with the video link
+                String saveFromUrl = "https://uk.savefrom.net/1-youtube-video-downloader.html?url=" + encodedUrl;
 
                 // Open the URL in the browser
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(yt1sUrl));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(saveFromUrl));
                 startActivity(intent);
 
-                Toast.makeText(this, "Opening yt1s.com converter in browser...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Opening SaveFrom.net in the browser...", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Error opening URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
 
 }
