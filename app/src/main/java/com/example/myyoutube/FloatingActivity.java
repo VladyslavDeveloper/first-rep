@@ -44,15 +44,12 @@ public class FloatingActivity extends AppCompatActivity {
     private boolean isSizeControlVisible = false;
     private Button btnDownload;
     private Button btnMove;
-    private boolean isMoveEnabled = false;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
     private float playbackSpeed = 1.0f; // Default playback speed
 
-    private int currentSizeState = 0; // 0: small, 1: medium, 2: large, 3: full screen
-    private boolean isFullScreen = false; // Track layout state
-    private int skipTime = 180; // Default skip time (3 minutes)
+     private int skipTime = 180; // Default skip time (3 minutes)
     private boolean isLooping = false;
     private Handler handler;
 
@@ -62,9 +59,9 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "MyYouTubePrefs";
     private static final String PREF_URL = "LastVideoUrl";
     private static final String TAG = "FloatingActivity";
-    private static final int STATIC_WIDTH = 400; // Static width in dp
-    private static final float DEFAULT_HEIGHT_PERCENT = 0.4f; // 40% of screen height
-    
+    private static final int STATIC_WIDTH = 370; // Static width in dp
+    private static final float DEFAULT_HEIGHT_PERCENT = 0.5f; // 40% of screen height
+
     // Touch handling variables
     private float initialTouchX;
     private float initialTouchY;
@@ -75,14 +72,10 @@ public class FloatingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "MyApp::MyWakelockTag");
-        wakeLock.acquire();
-
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        
+
         params = new WindowManager.LayoutParams(
                 (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density),
                 (int) (screenHeight * DEFAULT_HEIGHT_PERCENT),
@@ -125,7 +118,7 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
-        
+
         // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible
         btnMove.setOnTouchListener(new View.OnTouchListener() {
@@ -141,12 +134,12 @@ public class FloatingActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_MOVE:
                         float deltaX = event.getRawX() - initialTouchX;
                         float deltaY = event.getRawY() - initialTouchY;
-                        
+
                         params.x += deltaX;
                         params.y += deltaY;
-                        
+
                         windowManager.updateViewLayout(linearLayout1, params);
-                        
+
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
                         return true;
@@ -179,7 +172,7 @@ public class FloatingActivity extends AppCompatActivity {
         webSettings.setAllowContentAccess(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setLoadsImagesAutomatically(true);
-        
+
         // Enable hardware acceleration
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
@@ -230,7 +223,7 @@ public class FloatingActivity extends AppCompatActivity {
                         title = "Video";
                     }
                 }
-                
+
                 // For direct video URLs, create a custom HTML page with video player
                 String customHtml = "<html><body style='margin:0; padding:0; background:black;'>" +
                                   "<div style='color:white; padding:10px; font-family:Arial;'>" + title + "</div>" +
@@ -386,7 +379,7 @@ public class FloatingActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    float scale = Math.max(0.1f, progress / 100f);
+                    float scale = Math.max(0.05f, progress / 100f);
                     params.height = (int) (screenHeight * scale);
                     windowManager.updateViewLayout(linearLayout1, params);
                 }
@@ -400,21 +393,8 @@ public class FloatingActivity extends AppCompatActivity {
         });
     }
 
-    private void toggleSizeControl() {
-        isSizeControlVisible = !isSizeControlVisible;
-        sizeControlLayout.setVisibility(isSizeControlVisible ? View.VISIBLE : View.GONE);
-        
-        // Update seek bar progress based on current height
-        if (isSizeControlVisible) {
-            int screenHeight = getResources().getDisplayMetrics().heightPixels;
-            float currentScale = (float) params.height / screenHeight;
-            sizeSeekBar.setProgress((int) (currentScale * 100));
-        }
-    }
 
-    private boolean isTouchInResizeArea(float x, float y, int viewWidth, int viewHeight) {
-        return false; // Disable resize handle
-    }
+
 
     @Override
     public void onBackPressed() {
@@ -452,4 +432,3 @@ public class FloatingActivity extends AppCompatActivity {
 
 
 }
-//
