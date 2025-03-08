@@ -54,7 +54,16 @@
                 android:textColor="#EF1010"
                 android:padding="5dp"
                 android:gravity="center" />
-
+            <Button
+                android:id="@+id/btnSpeed"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:text="⏩"
+                android:textSize="18sp"
+                android:backgroundTint="#5F6060"
+                android:textColor="#EF1010"
+                android:padding="5dp"
+                android:gravity="center" />
             <Button
                 android:id="@+id/btnAction2"
                 android:layout_width="50dp"
@@ -66,16 +75,7 @@
                 android:padding="5dp"
                 android:gravity="center" />
 
-            <Button
-                android:id="@+id/btnSpeed"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:text="⏩"
-                android:textSize="18sp"
-                android:backgroundTint="#5F6060"
-                android:textColor="#EF1010"
-                android:padding="5dp"
-                android:gravity="center" />
+
 
             <Button
                 android:id="@+id/btnLoop"
