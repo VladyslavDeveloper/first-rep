@@ -386,44 +386,101 @@ public class FloatingActivity extends AppCompatActivity {
     private void downloadCurrentVideo() {
         webView.evaluateJavascript(
             "(function() {" +
-            "    var video = document.querySelector('video');" +
-            "    if(video && video.src) {" +
-            "        return video.src;" +
-            "    } else {" +
+            "    try {" +
+            "        var videoElement = document.querySelector('video');" +
+            "        var sources = [];" +
+            "        if (videoElement) {" +
+            "            sources.push(videoElement.src);" +
+            "            var sourceTags = videoElement.getElementsByTagName('source');" +
+            "            for (var i = 0; i < sourceTags.length; i++) {" +
+            "                sources.push(sourceTags[i].src);" +
+            "            }" +
+            "        }" +
+            "        // Try to get YouTube URL" +
+            "        var ytPlayer = document.querySelector('.html5-main-video');" +
+            "        if (ytPlayer) {" +
+            "            sources.push(ytPlayer.src);" +
+            "        }" +
+            "        // Get all video sources from the page" +
+            "        var allVideos = document.getElementsByTagName('video');" +
+            "        for (var i = 0; i < allVideos.length; i++) {" +
+            "            if (allVideos[i].src) sources.push(allVideos[i].src);" +
+            "        }" +
+            "        return JSON.stringify(sources);" +
+            "    } catch (e) {" +
             "        return '';" +
             "    }" +
             "})();",
             new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
-                    if (value != null && !value.equals("null") && !value.isEmpty()) {
-                        String videoUrl = value.replace("\"", "");
-                        startDownload(videoUrl);
-                    } else {
-                        Toast.makeText(FloatingActivity.this, "No video found to download", Toast.LENGTH_SHORT).show();
+                    try {
+                        if (value != null && !value.equals("null") && !value.equals("[]")) {
+                            // Remove quotes from JSON string
+                            value = value.replace("\"", "");
+                            value = value.replace("[", "");
+                            value = value.replace("]", "");
+                            
+                            // Split by comma if multiple sources
+                            String[] urls = value.split(",");
+                            boolean started = false;
+                            
+                            // Try each URL
+                            for (String url : urls) {
+                                if (!url.isEmpty() && url.startsWith("http")) {
+                                    startDownload(url);
+                                    started = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!started) {
+                                showDownloadError();
+                            }
+                        } else {
+                            showDownloadError();
+                        }
+                    } catch (Exception e) {
+                        showDownloadError();
                     }
                 }
             }
         );
     }
 
+    private void showDownloadError() {
+        runOnUiThread(() -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Download Error")
+                   .setMessage("Cannot download this video directly. You may need to use a different method or check if the video is downloadable.")
+                   .setPositiveButton("OK", null)
+                   .show();
+        });
+    }
+
     private void startDownload(String videoUrl) {
         try {
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
-            String fileName = "youtube_video_" + System.currentTimeMillis() + ".mp4";
-            request.setTitle("Downloading Video");
-            request.setDescription("Downloading YouTube video");
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-            request.allowScanningByMediaScanner();
+            if (!videoUrl.contains("googlevideo.com") && !videoUrl.contains("youtube.com")) {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
+                String fileName = "video_" + System.currentTimeMillis() + ".mp4";
+                request.setTitle("Downloading Video");
+                request.setDescription("Downloading video");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                request.allowScanningByMediaScanner();
+                request.setAllowedOverMetered(true);
+                request.setAllowedOverRoaming(true);
 
-            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-            if (downloadManager != null) {
-                downloadManager.enqueue(request);
-                Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                if (downloadManager != null) {
+                    downloadManager.enqueue(request);
+                    Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                showDownloadError();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Failed to start download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            showDownloadError();
         }
     }
 
