@@ -414,10 +414,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startFloatingActivity() {
-        String currentUrl = webView.getUrl(); // Получаем текущий URL из WebView
+        String currentUrl = webView.getUrl(); // Get current URL from WebView
         Intent intent = new Intent(this, FloatingActivity.class);
-        intent.putExtra("video_url", currentUrl); // Передаем URL в Intent
+        intent.putExtra("video_url", currentUrl); // Pass URL in Intent
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        finish(); // Close MainActivity
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Handle any new intents here if needed
+        setIntent(intent);
     }
 
     @Override

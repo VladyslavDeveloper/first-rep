@@ -79,14 +79,13 @@ public class FloatingActivity extends AppCompatActivity {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "MyApp::MyWakelockTag");
         wakeLock.acquire();
 
-
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
         
         params = new WindowManager.LayoutParams(
-                (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density), // Convert dp to pixels
-                (int) (screenHeight * DEFAULT_HEIGHT_PERCENT), // Set default height to 40% of screen
+                (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density),
+                (int) (screenHeight * DEFAULT_HEIGHT_PERCENT),
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
@@ -118,6 +117,10 @@ public class FloatingActivity extends AppCompatActivity {
         // Set button click listeners
         view.findViewById(R.id.btnClose).setOnClickListener(v -> {
             windowManager.removeView(view);
+            // Start MainActivity before finishing FloatingActivity
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         });
         view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
@@ -161,6 +164,14 @@ public class FloatingActivity extends AppCompatActivity {
 
         // Start duration check
         startDurationCheck();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        // Reload video URL from new intent
+        loadVideoUrlFromIntent();
     }
 
     private void initializeWebView() {
@@ -410,11 +421,11 @@ public class FloatingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack(); // Go back to the previous page in WebView history
-        } else {
-            super.onBackPressed(); // Exit the activity if there's no history
-        }
+        // Start MainActivity and finish this activity
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void downloadCurrentVideo() {
