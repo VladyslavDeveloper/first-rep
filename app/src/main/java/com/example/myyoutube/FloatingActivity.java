@@ -452,3 +452,4 @@ public class FloatingActivity extends AppCompatActivity {
         }
     }
 }
+//
