@@ -6,8 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.DownloadManager;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +27,7 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
+import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,6 +39,7 @@ public class FloatingActivity extends AppCompatActivity {
     private LinearLayout sizeControlLayout;
     private SeekBar sizeSeekBar;
     private boolean isSizeControlVisible = false;
+    private Button btnDownload;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
@@ -66,7 +71,7 @@ public class FloatingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag");
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "MyApp::MyWakelockTag");
         wakeLock.acquire();
 
 
@@ -95,6 +100,7 @@ public class FloatingActivity extends AppCompatActivity {
         webView = view.findViewById(R.id.webView);
         sizeControlLayout = view.findViewById(R.id.sizeControlLayout);
         sizeSeekBar = view.findViewById(R.id.sizeSeekBar);
+        btnDownload = view.findViewById(R.id.btnDownload);
 
         // Setup WebView
         initializeWebView();
@@ -140,6 +146,7 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
+        view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
 
         // Start duration check
         startDurationCheck();
@@ -184,6 +191,13 @@ public class FloatingActivity extends AppCompatActivity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setLoadsImagesAutomatically(true);
+        
+        // Enable hardware acceleration
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
@@ -193,7 +207,17 @@ public class FloatingActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-
+                // Inject JavaScript to keep video playing in background
+                webView.evaluateJavascript(
+                    "javascript:(function() {" +
+                    "    var video = document.querySelector('video');" +
+                    "    if(video) {" +
+                    "        video.addEventListener('play', function() {" +
+                    "            video.setAttribute('keepalive', 'true');" +
+                    "        });" +
+                    "    }" +
+                    "})();", null
+                );
             }
         });
     }
@@ -356,6 +380,50 @@ public class FloatingActivity extends AppCompatActivity {
             webView.goBack(); // Go back to the previous page in WebView history
         } else {
             super.onBackPressed(); // Exit the activity if there's no history
+        }
+    }
+
+    private void downloadCurrentVideo() {
+        webView.evaluateJavascript(
+            "(function() {" +
+            "    var video = document.querySelector('video');" +
+            "    if(video && video.src) {" +
+            "        return video.src;" +
+            "    } else {" +
+            "        return '';" +
+            "    }" +
+            "})();",
+            new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    if (value != null && !value.equals("null") && !value.isEmpty()) {
+                        String videoUrl = value.replace("\"", "");
+                        startDownload(videoUrl);
+                    } else {
+                        Toast.makeText(FloatingActivity.this, "No video found to download", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        );
+    }
+
+    private void startDownload(String videoUrl) {
+        try {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoUrl));
+            String fileName = "youtube_video_" + System.currentTimeMillis() + ".mp4";
+            request.setTitle("Downloading Video");
+            request.setDescription("Downloading YouTube video");
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            request.allowScanningByMediaScanner();
+
+            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            if (downloadManager != null) {
+                downloadManager.enqueue(request);
+                Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to start download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
