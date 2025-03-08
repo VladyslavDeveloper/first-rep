@@ -115,9 +115,6 @@ public class FloatingActivity extends AppCompatActivity {
         // Setup size control
         setupSizeControl();
 
-        // Set touch listener for moving the window
-        setupTouchListener(view);
-
         // Set button click listeners
         view.findViewById(R.id.btnClose).setOnClickListener(v -> {
             windowManager.removeView(view);
@@ -128,32 +125,26 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
-        btnMove.setVisibility(View.GONE);
-
-        // Start duration check
-        startDurationCheck();
-    }
-
-    private void setupTouchListener(View view) {
-        LinearLayout controlBar = view.findViewById(R.id.linearLayout2);
-        controlBar.setOnTouchListener(new View.OnTouchListener() {
+        
+        // Setup move button touch listener
+        btnMove.setVisibility(View.VISIBLE); // Make move button visible
+        btnMove.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
+                        btnMove.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        // Handle moving
                         float deltaX = event.getRawX() - initialTouchX;
                         float deltaY = event.getRawY() - initialTouchY;
                         
                         params.x += deltaX;
                         params.y += deltaY;
                         
-                        // Update the layout
                         windowManager.updateViewLayout(linearLayout1, params);
                         
                         initialTouchX = event.getRawX();
@@ -161,57 +152,15 @@ public class FloatingActivity extends AppCompatActivity {
                         return true;
 
                     case MotionEvent.ACTION_UP:
+                        btnMove.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5F6060")));
                         return true;
                 }
                 return false;
             }
         });
-    }
 
-    private void toggleMoveMode() {
-        isMoveEnabled = !isMoveEnabled;
-        btnMove.setBackgroundTintList(ColorStateList.valueOf(
-            isMoveEnabled ? Color.RED : Color.parseColor("#5F6060")
-        ));
-        Toast.makeText(this, 
-            isMoveEnabled ? "Move mode enabled - Drag to move" : "Move mode disabled",
-            Toast.LENGTH_SHORT).show();
-    }
-
-    private void skipVideo() {
-        webView.evaluateJavascript(
-                "(function() {" +
-                        "var video = document.querySelector('video');" +
-                        "if (video) {" +
-                        "return video.duration;" +
-                        "} else {" +
-                        "return 0;" +
-                        "}" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        try {
-                            double duration = Double.parseDouble(value);
-                            if (duration < 25) { // If video is shorter than 4 seconds
-                                // Skip forward 3 minutes (180 seconds)
-                                webView.evaluateJavascript(
-                                        "var video = document.querySelector('video');" +
-                                                "if (video) {" +
-                                                "var newTime = video.currentTime + 180;" + // Skip forward 3 minutes
-                                                "if (newTime < video.duration) {" +
-                                                "video.currentTime = newTime;" +
-                                                "} else {" +
-                                                "video.currentTime = video.duration;" +
-                                                "}" +
-                                                "}", null);
-                            } else {
-
-                            }
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "Error parsing video duration: " + e.getMessage());
-                        }
-                    }
-                });
+        // Start duration check
+        startDurationCheck();
     }
 
     private void initializeWebView() {
@@ -288,11 +237,10 @@ public class FloatingActivity extends AppCompatActivity {
             webView.loadUrl("https://www.youtube.com");
         }
     }
-//
 
     private void skipThreeMinutes() {
         webView.evaluateJavascript("document.querySelector('video').currentTime += " + skipTime + ";", null);
-         }
+    }
 
     private void startDurationCheck() {
         if (handler == null) {
@@ -329,9 +277,43 @@ public class FloatingActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
+    private void skipVideo() {
+        webView.evaluateJavascript(
+                "(function() {" +
+                        "var video = document.querySelector('video');" +
+                        "if (video) {" +
+                        "return video.duration;" +
+                        "} else {" +
+                        "return 0;" +
+                        "}" +
+                        "})();", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        try {
+                            double duration = Double.parseDouble(value);
+                            if (duration < 25) { // If video is shorter than 4 seconds
+                                // Skip forward 3 minutes (180 seconds)
+                                webView.evaluateJavascript(
+                                        "var video = document.querySelector('video');" +
+                                                "if (video) {" +
+                                                "var newTime = video.currentTime + 180;" + // Skip forward 3 minutes
+                                                "if (newTime < video.duration) {" +
+                                                "video.currentTime = newTime;" +
+                                                "} else {" +
+                                                "video.currentTime = video.duration;" +
+                                                "}" +
+                                                "}", null);
+                            } else {
+
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.e(TAG, "Error parsing video duration: " + e.getMessage());
+                        }
+                    }
+                });
+    }
 
     private void showSpeedDialog() {
         // Cycle through the speeds: 1x -> 2x -> 3x -> 1x
@@ -344,8 +326,7 @@ public class FloatingActivity extends AppCompatActivity {
         }
 
         applyPlaybackSpeed(playbackSpeed);
-          }
-
+    }
 
     private void applyPlaybackSpeed(float speed) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
@@ -357,10 +338,7 @@ public class FloatingActivity extends AppCompatActivity {
 
         // Execute JavaScript to toggle the loop property of the video element
         webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
-
-
     }
-
 
     private void startVoiceSearch() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -392,7 +370,6 @@ public class FloatingActivity extends AppCompatActivity {
         String searchUrl = "https://www.youtube.com/results?search_query=" + query.replace(" ", "+");
         webView.loadUrl(searchUrl);
     }
-
 
     private void setupSizeControl() {
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
@@ -463,5 +440,4 @@ public class FloatingActivity extends AppCompatActivity {
             Toast.makeText(this, "Error opening video: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
 }
