@@ -262,7 +262,7 @@ public class FloatingActivity extends AppCompatActivity {
             webView.loadUrl("https://www.youtube.com");
         }
     }
-
+//
 
     private void skipThreeMinutes() {
         webView.evaluateJavascript("document.querySelector('video').currentTime += " + skipTime + ";", null);
