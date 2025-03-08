@@ -410,15 +410,33 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
     private void downloadCurrentVideo() {
-        String currentUrl = webView.getUrl();
+        String currentUrl = getIntent().getStringExtra("video_url");
         
         // Handle direct video URLs
         if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
             try {
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentUrl));
-                String fileName = "video_" + System.currentTimeMillis() + ".mp4";
                 
-                request.setTitle("Downloading Video");
+                // Extract title from URL if available
+                String title = "video";
+                if (currentUrl.contains("title=")) {
+                    try {
+                        String[] params = currentUrl.split("&");
+                        for (String param : params) {
+                            if (param.startsWith("title=")) {
+                                title = param.substring(6).replace("+", " ");
+                                title = java.net.URLDecoder.decode(title, "UTF-8");
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Keep default title if extraction fails
+                    }
+                }
+                
+                String fileName = title + "_" + System.currentTimeMillis() + ".mp4";
+                
+                request.setTitle("Downloading " + title);
                 request.setDescription("Downloading video from stream");
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
@@ -426,15 +444,33 @@ public class FloatingActivity extends AppCompatActivity {
                 DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 downloadManager.enqueue(request);
                 
-                Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Download started: " + title, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Error starting download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        } else if (currentUrl != null && currentUrl.contains("youtube.com/watch?v=")) {
-            // Open yt1s.com directly in WebView
-            webView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
         } else {
-            Toast.makeText(this, "Please open a YouTube video first", Toast.LENGTH_SHORT).show();
+            // Open yt1s.com with the current video URL
+            webView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
+            
+            // After page loads, we'll inject the current URL
+            webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    if (url.contains("yt1s.com")) {
+                        // Inject the current video URL into the input field
+                        String javascript = "javascript:(function() {" +
+                                "var input = document.querySelector('input[name=\"q\"]');" +
+                                "if(input) {" +
+                                "input.value = '" + currentUrl + "';" +
+                                "var event = new Event('input', { bubbles: true });" +
+                                "input.dispatchEvent(event);" +
+                                "}" +
+                                "})();";
+                        webView.evaluateJavascript(javascript, null);
+                    }
+                }
+            });
         }
     }
 
