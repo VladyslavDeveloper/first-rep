@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -449,28 +450,61 @@ public class FloatingActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error starting download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
-            // Open yt1s.com with the current video URL
-            webView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
+            // Create a hidden WebView for background processing
+            WebView hiddenWebView = new WebView(this);
+            hiddenWebView.setVisibility(View.GONE);
+            hiddenWebView.getSettings().setJavaScriptEnabled(true);
             
-            // After page loads, we'll inject the current URL
-            webView.setWebViewClient(new WebViewClient() {
+            hiddenWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
                     super.onPageFinished(view, url);
                     if (url.contains("yt1s.com")) {
-                        // Inject the current video URL into the input field
+                        // Inject script to trigger download process
                         String javascript = "javascript:(function() {" +
                                 "var input = document.querySelector('input[name=\"q\"]');" +
                                 "if(input) {" +
                                 "input.value = '" + currentUrl + "';" +
-                                "var event = new Event('input', { bubbles: true });" +
-                                "input.dispatchEvent(event);" +
+                                "input.dispatchEvent(new Event('input', { bubbles: true }));" +
+                                "setTimeout(function() {" +
+                                "var downloadBtn = document.querySelector('button.btn-download');" +
+                                "if(downloadBtn) downloadBtn.click();" +
+                                "}, 2000);" + // Wait for conversion
                                 "}" +
                                 "})();";
-                        webView.evaluateJavascript(javascript, null);
+                        view.evaluateJavascript(javascript, null);
+                    }
+                }
+                
+                @Override
+                public void onLoadResource(WebView view, String url) {
+                    // Check if this is a download link
+                    if (url.contains("/download")) {
+                        // Start the download
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                        request.setTitle("Downloading Video");
+                        request.setDescription("Processing download from YouTube");
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, 
+                            "youtube_video_" + System.currentTimeMillis() + ".mp4");
+                        
+                        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                        downloadManager.enqueue(request);
+                        
+                        // Remove the hidden WebView
+                        if (hiddenWebView.getParent() != null) {
+                            ((ViewGroup) hiddenWebView.getParent()).removeView(hiddenWebView);
+                        }
                     }
                 }
             });
+            
+            // Add hidden WebView to layout
+            addContentView(hiddenWebView, new ViewGroup.LayoutParams(1, 1));
+            
+            // Load yt1s.com
+            hiddenWebView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
+            Toast.makeText(this, "Processing download request...", Toast.LENGTH_SHORT).show();
         }
     }
 
