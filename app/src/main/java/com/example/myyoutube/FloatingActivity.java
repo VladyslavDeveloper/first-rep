@@ -31,6 +31,8 @@ import android.widget.Toast;
 import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.ColorStateList;
 
 import java.util.ArrayList;
 
@@ -41,6 +43,8 @@ public class FloatingActivity extends AppCompatActivity {
     private SeekBar sizeSeekBar;
     private boolean isSizeControlVisible = false;
     private Button btnDownload;
+    private Button btnMove;
+    private boolean isMoveEnabled = false;
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
@@ -102,6 +106,7 @@ public class FloatingActivity extends AppCompatActivity {
         sizeControlLayout = view.findViewById(R.id.sizeControlLayout);
         sizeSeekBar = view.findViewById(R.id.sizeSeekBar);
         btnDownload = view.findViewById(R.id.btnDownload);
+        btnMove = view.findViewById(R.id.btnMove);
 
         // Setup WebView
         initializeWebView();
@@ -111,9 +116,32 @@ public class FloatingActivity extends AppCompatActivity {
         setupSizeControl();
 
         // Set touch listener for moving the window
+        setupTouchListener(view);
+
+        // Set button click listeners
+        view.findViewById(R.id.btnClose).setOnClickListener(v -> {
+            windowManager.removeView(view);
+            finish();
+        });
+        view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
+        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
+        view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
+        view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
+        view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
+        btnMove.setOnClickListener(v -> toggleMoveMode());
+
+        // Start duration check
+        startDurationCheck();
+    }
+
+    private void setupTouchListener(View view) {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if (!isMoveEnabled) {
+                    return false;
+                }
+
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialTouchX = event.getRawX();
@@ -131,27 +159,26 @@ public class FloatingActivity extends AppCompatActivity {
                         return true;
 
                     case MotionEvent.ACTION_UP:
+                        if (isMoveEnabled) {
+                            toggleMoveMode(); // Disable move mode after releasing
+                        }
                         return true;
                 }
                 return false;
             }
         });
-
-
-        // Set button click listeners
-        view.findViewById(R.id.btnClose).setOnClickListener(v -> {
-            windowManager.removeView(view);
-            finish();
-        });
-        view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
-        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
-        view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
-        view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
-        view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
-
-        // Start duration check
-        startDurationCheck();
     }
+
+    private void toggleMoveMode() {
+        isMoveEnabled = !isMoveEnabled;
+        btnMove.setBackgroundTintList(ColorStateList.valueOf(
+            isMoveEnabled ? Color.RED : Color.parseColor("#5F6060")
+        ));
+        Toast.makeText(this, 
+            isMoveEnabled ? "Move mode enabled - Drag to move" : "Move mode disabled",
+            Toast.LENGTH_SHORT).show();
+    }
+
     private void skipVideo() {
         webView.evaluateJavascript(
                 "(function() {" +
