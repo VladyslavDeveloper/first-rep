@@ -427,9 +427,9 @@ public class FloatingActivity extends AppCompatActivity {
                 // Encode the current URL and append it to yt1s.com URL
                 String encodedUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
                 String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4?q=" + encodedUrl;
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(yt1sUrl));
-                startActivity(browserIntent);
-                Toast.makeText(this, "Opening video in yt1s.com...", Toast.LENGTH_SHORT).show();
+                // Load yt1s.com in the current WebView
+                webView.loadUrl(yt1sUrl);
+                Toast.makeText(this, "Opening yt1s.com converter...", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Error opening URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
