@@ -223,12 +223,20 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
     private void loadVideoUrlFromIntent() {
-        // Get the video URL passed from MainActivity
         String videoUrl = getIntent().getStringExtra("video_url");
         if (videoUrl != null && !videoUrl.isEmpty()) {
-            webView.loadUrl(videoUrl); // Load the video URL in WebView
+            if (videoUrl.contains("googlevideo.com/videoplayback")) {
+                // For direct video URLs, create a custom HTML page with video player
+                String customHtml = "<html><body style='margin:0; padding:0; background:black;'>" +
+                                  "<video style='width:100%; height:100%;' controls autoplay>" +
+                                  "<source src='" + videoUrl + "' type='video/mp4'>" +
+                                  "</video></body></html>";
+                webView.loadData(customHtml, "text/html", "UTF-8");
+            } else {
+                webView.loadUrl(videoUrl);
+            }
         } else {
-            webView.loadUrl("https://www.youtube.com"); // Default to YouTube if no URL is passed
+            webView.loadUrl("https://www.youtube.com");
         }
     }
 
@@ -385,10 +393,29 @@ public class FloatingActivity extends AppCompatActivity {
 
     private void downloadCurrentVideo() {
         String currentUrl = webView.getUrl();
-        if (currentUrl != null && currentUrl.contains("youtube.com/watch?v=")) {
+        
+        // Handle direct video URLs
+        if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
+            try {
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentUrl));
+                String fileName = "video_" + System.currentTimeMillis() + ".mp4";
+                
+                request.setTitle("Downloading Video");
+                request.setDescription("Downloading video from stream");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                
+                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.enqueue(request);
+                
+                Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error starting download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        } else if (currentUrl != null && currentUrl.contains("youtube.com/watch?v=")) {
             String videoId = currentUrl.split("v=")[1];
             if (videoId.contains("&")) {
-                videoId = videoId.split("&")[0];
+                videoId = videoId.split("&")[1];
             }
             String downloadUrl = "https://www.y2mate.com/youtube/" + videoId;
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
