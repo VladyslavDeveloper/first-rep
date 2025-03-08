@@ -128,20 +128,17 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
-        btnMove.setOnClickListener(v -> toggleMoveMode());
+        btnMove.setVisibility(View.GONE);
 
         // Start duration check
         startDurationCheck();
     }
 
     private void setupTouchListener(View view) {
-        view.setOnTouchListener(new View.OnTouchListener() {
+        LinearLayout controlBar = view.findViewById(R.id.linearLayout2);
+        controlBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (!isMoveEnabled) {
-                    return false;
-                }
-
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialTouchX = event.getRawX();
@@ -150,18 +147,20 @@ public class FloatingActivity extends AppCompatActivity {
 
                     case MotionEvent.ACTION_MOVE:
                         // Handle moving
-                        params.x += (int)(event.getRawX() - initialTouchX);
-                        params.y += (int)(event.getRawY() - initialTouchY);
-                        windowManager.updateViewLayout(view, params);
+                        float deltaX = event.getRawX() - initialTouchX;
+                        float deltaY = event.getRawY() - initialTouchY;
+                        
+                        params.x += deltaX;
+                        params.y += deltaY;
+                        
+                        // Update the layout
+                        windowManager.updateViewLayout(linearLayout1, params);
                         
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
                         return true;
 
                     case MotionEvent.ACTION_UP:
-                        if (isMoveEnabled) {
-                            toggleMoveMode(); // Disable move mode after releasing
-                        }
                         return true;
                 }
                 return false;
