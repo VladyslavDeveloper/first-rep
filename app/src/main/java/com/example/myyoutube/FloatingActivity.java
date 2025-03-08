@@ -420,11 +420,16 @@ public class FloatingActivity extends AppCompatActivity {
             startActivity(browserIntent);
             Toast.makeText(this, "Opening in browser...", Toast.LENGTH_SHORT).show();
         } else {
-            // Open yt1s.com in browser with the video URL
-            String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4";
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(yt1sUrl));
-            startActivity(browserIntent);
-            Toast.makeText(this, "Opening in browser...", Toast.LENGTH_SHORT).show();
+            try {
+                // Encode the current URL and append it to yt1s.com URL
+                String encodedUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
+                String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4?q=" + encodedUrl;
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(yt1sUrl));
+                startActivity(browserIntent);
+                Toast.makeText(this, "Opening video in yt1s.com...", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error opening URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
