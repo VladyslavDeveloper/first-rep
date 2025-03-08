@@ -415,96 +415,16 @@ public class FloatingActivity extends AppCompatActivity {
         
         // Handle direct video URLs
         if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            try {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentUrl));
-                
-                // Extract title from URL if available
-                String title = "video";
-                if (currentUrl.contains("title=")) {
-                    try {
-                        String[] params = currentUrl.split("&");
-                        for (String param : params) {
-                            if (param.startsWith("title=")) {
-                                title = param.substring(6).replace("+", " ");
-                                title = java.net.URLDecoder.decode(title, "UTF-8");
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        // Keep default title if extraction fails
-                    }
-                }
-                
-                String fileName = title + "_" + System.currentTimeMillis() + ".mp4";
-                
-                request.setTitle("Downloading " + title);
-                request.setDescription("Downloading video from stream");
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                
-                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                downloadManager.enqueue(request);
-                
-                Toast.makeText(this, "Download started: " + title, Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Error starting download: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            // Open in browser
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentUrl));
+            startActivity(browserIntent);
+            Toast.makeText(this, "Opening in browser...", Toast.LENGTH_SHORT).show();
         } else {
-            // Create a hidden WebView for background processing
-            WebView hiddenWebView = new WebView(this);
-            hiddenWebView.setVisibility(View.GONE);
-            hiddenWebView.getSettings().setJavaScriptEnabled(true);
-            
-            hiddenWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    super.onPageFinished(view, url);
-                    if (url.contains("yt1s.com")) {
-                        // Inject script to trigger download process
-                        String javascript = "javascript:(function() {" +
-                                "var input = document.querySelector('input[name=\"q\"]');" +
-                                "if(input) {" +
-                                "input.value = '" + currentUrl + "';" +
-                                "input.dispatchEvent(new Event('input', { bubbles: true }));" +
-                                "setTimeout(function() {" +
-                                "var downloadBtn = document.querySelector('button.btn-download');" +
-                                "if(downloadBtn) downloadBtn.click();" +
-                                "}, 2000);" + // Wait for conversion
-                                "}" +
-                                "})();";
-                        view.evaluateJavascript(javascript, null);
-                    }
-                }
-                
-                @Override
-                public void onLoadResource(WebView view, String url) {
-                    // Check if this is a download link
-                    if (url.contains("/download")) {
-                        // Start the download
-                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                        request.setTitle("Downloading Video");
-                        request.setDescription("Processing download from YouTube");
-                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, 
-                            "youtube_video_" + System.currentTimeMillis() + ".mp4");
-                        
-                        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                        downloadManager.enqueue(request);
-                        
-                        // Remove the hidden WebView
-                        if (hiddenWebView.getParent() != null) {
-                            ((ViewGroup) hiddenWebView.getParent()).removeView(hiddenWebView);
-                        }
-                    }
-                }
-            });
-            
-            // Add hidden WebView to layout
-            addContentView(hiddenWebView, new ViewGroup.LayoutParams(1, 1));
-            
-            // Load yt1s.com
-            hiddenWebView.loadUrl("https://www.yt1s.com/enzkvc/youtube-to-mp4");
-            Toast.makeText(this, "Processing download request...", Toast.LENGTH_SHORT).show();
+            // Open yt1s.com in browser with the video URL
+            String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4";
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(yt1sUrl));
+            startActivity(browserIntent);
+            Toast.makeText(this, "Opening in browser...", Toast.LENGTH_SHORT).show();
         }
     }
 
