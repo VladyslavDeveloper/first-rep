@@ -415,24 +415,37 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
     private void downloadCurrentVideo() {
-        String currentUrl = getIntent().getStringExtra("video_url");
+        // The specific video URL to load
+        String videoUrl = "https://rr2---sn-4g5lznle.googlevideo.com/videoplayback?expire=1741457579&ei=SzTMZ468OoCN6dsPu9vW0As&ip=62.45.113.35&id=o-ADe0hy_RkvAIdIlb9n4NRHTBORNnymLnRkVfYeWjNhzu&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AUWDL3xZP2QbPdCriwj2jEi5__w2EDnwMj5aJ_3mV4jTqVxOnVf0ReN13CuLYQDrt6-3y_qpgJII8-US&vprv=1&svpuc=1&mime=video%2Fmp4&ns=fmcNssPRKcXHNT84rMtP3U4Q&rqh=1&gir=yes&clen=3709976&ratebypass=yes&dur=196.626&lmt=1741419428472069&lmw=1&fexp=24350590,24350737,24350827,24350961,24351173,24351207,24351275,24351283,24351347,24351348,24351377,51326932,51358317,51411872&c=TVHTML5&sefc=1&txp=6209224&n=-DgjcExqtFtxaQ&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgUn67gaWxfcNOu1L3C-Zw87K4sdvq4Ts073wuZr60lVwCIDNcHAMZrJGsyhqY48F7gwLFYkD82Ix77fBMy87MMZ8G&title=English+learning+video+%7C+English+learning+%7C+English+story+%7C+emotional+story+%7C+heart+touching+story&rm=sn-j5pfqpxonuxo-guh67s&rrc=79,80&req_id=134b56cb2d71a3ee&redirect_counter=2&cm2rm=sn-5hnese76&cms_redirect=yes&cmsv=e&met=1741436065,&mh=N7&mip=2a02:2454:8619:e700:647f:710d:2d22:2079&mm=34&mn=sn-4g5lznle&ms=ltu&mt=1741435715&mv=m&mvi=2&pl=43&rms=ltu,au&lsparams=met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AFVRHeAwRQIhAJ44u2BV4hC2TldChVkySUCd1lLEuDoJyvapmNf7YEe_AiAhS11yOFzdCfL_LQgktpcfIyIoEkq7xpAdKKq-QaZI_g%3D%3D";
         
-        // Handle direct video URLs
-        if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            // Load the video URL in the current player
-            loadVideoInPlayer(currentUrl);
-            Toast.makeText(this, "Loading video...", Toast.LENGTH_SHORT).show();
-        } else {
-            try {
-                // Encode the current URL and append it to yt1s.com URL
-                String encodedUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
-                String yt1sUrl = "https://www.yt1s.com/enzkvc/youtube-to-mp4?q=" + encodedUrl;
-                // Load yt1s.com in the current WebView
-                webView.loadUrl(yt1sUrl);
-                Toast.makeText(this, "Opening yt1s.com converter...", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Error opening URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        try {
+            // Extract title from URL
+            String title = "";
+            if (videoUrl.contains("title=")) {
+                try {
+                    String[] params = videoUrl.split("&");
+                    for (String param : params) {
+                        if (param.startsWith("title=")) {
+                            title = param.substring(6).replace("+", " ");
+                            title = java.net.URLDecoder.decode(title, "UTF-8");
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    title = "Video";
+                }
             }
+            
+            // Create custom HTML page with video player
+            String customHtml = "<html><body style='margin:0; padding:0; background:black;'>" +
+                              "<div style='color:white; padding:10px; font-family:Arial;'>" + title + "</div>" +
+                              "<video style='width:100%; height:calc(100% - 40px);' controls autoplay>" +
+                              "<source src='" + videoUrl + "' type='video/mp4'>" +
+                              "</video></body></html>";
+            webView.loadData(customHtml, "text/html", "UTF-8");
+            Toast.makeText(this, "Loading video: " + title, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error loading video: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
