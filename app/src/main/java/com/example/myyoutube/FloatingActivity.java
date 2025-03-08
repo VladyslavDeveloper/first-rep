@@ -225,6 +225,10 @@ public class FloatingActivity extends AppCompatActivity {
 
     private void loadVideoUrlFromIntent() {
         String videoUrl = getIntent().getStringExtra("video_url");
+        loadVideoInPlayer(videoUrl);
+    }
+
+    private void loadVideoInPlayer(String videoUrl) {
         if (videoUrl != null && !videoUrl.isEmpty()) {
             if (videoUrl.contains("googlevideo.com/videoplayback")) {
                 // Extract title from URL parameters
@@ -415,10 +419,9 @@ public class FloatingActivity extends AppCompatActivity {
         
         // Handle direct video URLs
         if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            // Open in browser
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currentUrl));
-            startActivity(browserIntent);
-            Toast.makeText(this, "Opening in browser...", Toast.LENGTH_SHORT).show();
+            // Load the video URL in the current player
+            loadVideoInPlayer(currentUrl);
+            Toast.makeText(this, "Loading video...", Toast.LENGTH_SHORT).show();
         } else {
             try {
                 // Encode the current URL and append it to yt1s.com URL
