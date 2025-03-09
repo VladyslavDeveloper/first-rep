@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             // Optionally set video container height back to wrap_content or desired height
             FrameLayout videoContainer = findViewById(R.id.controls_scroll);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
-            params.height = RelativeLayout.LayoutParams.WRAP_CONTENT; // Change this as needed
+            params.height = 234;
             videoContainer.setLayoutParams(params);
         }
     }
