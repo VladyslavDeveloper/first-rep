@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
             controlsLayout.setVisibility(View.GONE);
             joystickView.setVisibility(View.GONE);
             // Set video container height to 0dp
-            FrameLayout videoContainer = findViewById(R.id.video_container);
+            FrameLayout videoContainer = findViewById(R.id.controls_scroll);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
             params.height = 0; // Set height to 0dp
             videoContainer.setLayoutParams(params);
@@ -404,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
             controlsLayout.setVisibility(View.VISIBLE);
             joystickView.setVisibility(View.VISIBLE);
             // Optionally set video container height back to wrap_content or desired height
-            FrameLayout videoContainer = findViewById(R.id.video_container);
+            FrameLayout videoContainer = findViewById(R.id.controls_scroll);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
             params.height = RelativeLayout.LayoutParams.WRAP_CONTENT; // Change this as needed
             videoContainer.setLayoutParams(params);
