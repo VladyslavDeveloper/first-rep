@@ -39,6 +39,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.pm.ActivityInfo;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -393,9 +395,19 @@ public class MainActivity extends AppCompatActivity {
         if (controlsLayout.getVisibility() == View.VISIBLE) {
             controlsLayout.setVisibility(View.GONE);
             joystickView.setVisibility(View.GONE);
+            // Set video container height to 0dp
+            FrameLayout videoContainer = findViewById(R.id.video_container);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
+            params.height = 0; // Set height to 0dp
+            videoContainer.setLayoutParams(params);
         } else {
             controlsLayout.setVisibility(View.VISIBLE);
             joystickView.setVisibility(View.VISIBLE);
+            // Optionally set video container height back to wrap_content or desired height
+            FrameLayout videoContainer = findViewById(R.id.video_container);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
+            params.height = RelativeLayout.LayoutParams.WRAP_CONTENT; // Change this as needed
+            videoContainer.setLayoutParams(params);
         }
     }
 
