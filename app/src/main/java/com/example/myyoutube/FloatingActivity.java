@@ -430,6 +430,18 @@ public class FloatingActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Pause the video when the activity is not visible
+        webView.evaluateJavascript("document.querySelector('video').pause();", null);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Resume the video when the activity is visible
+        webView.evaluateJavascript("document.querySelector('video').play();", null);
+    }
 
 }
