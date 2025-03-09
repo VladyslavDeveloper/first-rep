@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="84dp"
         android:layout_alignParentBottom="true"
-        android:background="#00E1E0DF">
+        android:background="#000000">
 
         <LinearLayout
             android:id="@+id/controls"
