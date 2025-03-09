@@ -58,7 +58,7 @@ public class JoystickView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         centerX = w / 2f;
         centerY = h / 2f;
-        baseRadius = Math.min(w, h) / 3f;
+        baseRadius = Math.min(w, h) / 2f;
         hatRadius = Math.min(w, h) / 5f;
         joystickX = centerX;
         joystickY = centerY;
