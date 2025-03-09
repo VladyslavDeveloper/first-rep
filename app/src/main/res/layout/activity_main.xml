@@ -141,8 +141,8 @@
 
     <com.example.myyoutube.JoystickView
         android:id="@+id/joystickView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="188dp"
