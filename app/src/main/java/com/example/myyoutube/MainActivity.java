@@ -382,9 +382,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (shouldCheckDuration) {
-                    skipaAdd.checkVideoDuration();
                     skipaAdd.skipVideo();
-                    skipaAdd.pressSkipAdButton();
+                    skipaAdd.checkVideoDuration();
                     saveLastVideoUrl(webView.getUrl());
                     handler.postDelayed(this, 1000);
                 }
