@@ -100,5 +100,27 @@ public class SkipaAdd {
         });
 
     }
+    public void pressSkipAdButton() {
+        webView.evaluateJavascript(
+                "(function() {" +
+                        "let adModule = document.querySelector('.video-ads.ytp-ad-module');" +
+                        "if (adModule) {" +
+                        "   let skipButton = adModule.querySelector('button.ytp-skip-ad-button');" +
+                        "   if (skipButton) {" +
+                        "       skipButton.click();" + // Нажатие на кнопку "Пропустить"
+                        "       return 'Ad skipped';" +
+                        "   } else {" +
+                        "       return 'Skip button not found inside ad module';" +
+                        "   }" +
+                        "} else {" +
+                        "   return 'Ad module not found';" +
+                        "}" +
+                        "})();",
+                value -> Log.d("SkipaAdd", "JS Result: " + value)
+        );
+    }
+
+
+
 
 }

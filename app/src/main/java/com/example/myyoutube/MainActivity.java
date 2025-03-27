@@ -384,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 if (shouldCheckDuration) {
                     skipaAdd.checkVideoDuration();
                     skipaAdd.skipVideo();
+                    skipaAdd.pressSkipAdButton();
                     saveLastVideoUrl(webView.getUrl());
                     handler.postDelayed(this, 1000);
                 }
@@ -548,4 +549,6 @@ public class MainActivity extends AppCompatActivity {
             btnRotate.setText("📱");
         }
     }
+
+
 }
