@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showSearchChannel() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Search youtube channel");
+        builder.setTitle("Search youtube channel or RecentVideos");
         
         final EditText input = new EditText(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -566,19 +566,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Search Channel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                String query = input.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    searchChannel(query);
+                }
             }
         });
 
         builder.show();
     }
 
-    private void searchRecentVideos(String query) {
+    private void searchChannel(String query) {
         // Construct the YouTube search URL with recent filter
         String url = "https://www.youtube.com/results?search_query=" + Uri.encode(query) + "&sp=CAESAhAC";
         webView.loadUrl(url);
     }
+    private void searchRecentVideos(String query) {
+        // Конструируем URL с фильтром для видео
+        String url = "https://www.youtube.com/results?search_query=" + Uri.encode(query) + "&sp=EgIQAQ%253D%253D";
+        webView.loadUrl(url);
+    }
+
 }
