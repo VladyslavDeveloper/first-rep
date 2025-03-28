@@ -379,7 +379,7 @@ public class FloatingActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    float scale = Math.max(0.05f, progress / 100f);
+                    float scale = Math.max(0.04f, progress / 100f);
                     params.height = (int) (screenHeight * scale);
                     windowManager.updateViewLayout(linearLayout1, params);
                 }
@@ -430,18 +430,7 @@ public class FloatingActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Pause the video when the activity is not visible
-        webView.evaluateJavascript("document.querySelector('video').pause();", null);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Resume the video when the activity is visible
-        webView.evaluateJavascript("document.querySelector('video').play();", null);
-    }
+
 
 }
