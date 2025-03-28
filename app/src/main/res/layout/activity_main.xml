@@ -123,7 +123,7 @@
                 android:layout_marginStart="1dp"
                 android:backgroundTint="#5F6060"
                 android:padding="5dp"
-                android:text="📅"
+                android:text="👨‍💻"
                 android:textColor="#BBFD78" />
 
             <Button
