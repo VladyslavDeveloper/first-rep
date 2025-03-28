@@ -394,17 +394,6 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
 
-
-
-    @Override
-    public void onBackPressed() {
-        // Start MainActivity and finish this activity
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-    }
-
     private void downloadCurrentVideo() {
         String currentUrl = getIntent().getStringExtra("video_url");
 
