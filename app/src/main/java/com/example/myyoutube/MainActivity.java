@@ -33,6 +33,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
+    private Button btnRecentVideos;
     private Handler handler;
     private boolean shouldCheckDuration = false;
     private boolean isLooping = false;
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         btnLoop = findViewById(R.id.btnLoop);
         btnTimer = findViewById(R.id.btnTimer);
         btnRotate = findViewById(R.id.btnRotate);
+        btnRecentVideos = findViewById(R.id.btnRecentVideos);
 
         showSkipDialog = new ShowSkipDialog(this,webView);
         skipaAdd = new SkipaAdd(this, webView);
@@ -104,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 voiceSearch.startVoiceSearch();
+            }
+        });
+
+        // Set click listener for recent videos button
+        btnRecentVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRecentVideosDialog();
             }
         });
 
@@ -549,5 +560,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void showRecentVideosDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Search Recent Videos");
+        
+        final EditText input = new EditText(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        input.setLayoutParams(lp);
+        builder.setView(input);
 
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String query = input.getText().toString().trim();
+                if (!query.isEmpty()) {
+                    searchRecentVideos(query);
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void searchRecentVideos(String query) {
+        // Construct the YouTube search URL with recent filter
+        String url = "https://www.youtube.com/results?search_query=" + Uri.encode(query) + "&sp=CAESAhAC";
+        webView.loadUrl(url);
+    }
 }
