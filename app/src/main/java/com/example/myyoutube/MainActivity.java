@@ -1,16 +1,7 @@
 package com.example.myyoutube;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-
-import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,22 +11,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -114,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecentVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showRecentVideosDialog();
+                showSearchChannel();
             }
         });
 
@@ -560,9 +544,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showRecentVideosDialog() {
+    private void showSearchChannel() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Search Recent Videos");
+        builder.setTitle("Search youtube channel");
         
         final EditText input = new EditText(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
