@@ -28,7 +28,7 @@ public class VoiceSearch {
         try {
             activity.startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, "Speech recognition is not supported on this device", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -41,7 +41,7 @@ public class VoiceSearch {
                 String searchUrl = "https://www.youtube.com/results?search_query=" + query;
                 webView.loadUrl(searchUrl);
             } else {
-                Toast.makeText(activity, "No voice input detected", Toast.LENGTH_SHORT).show();
+
             }
         }
     }
