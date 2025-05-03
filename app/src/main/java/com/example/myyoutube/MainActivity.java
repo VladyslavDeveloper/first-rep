@@ -559,7 +559,6 @@ public class MainActivity extends AppCompatActivity {
                             null
                     );
 
-                    // Выполнение JavaScript
 
 
 
@@ -568,11 +567,25 @@ public class MainActivity extends AppCompatActivity {
         }  else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             // Отмена всех стилей
 
-            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-            String lastVideoUrl = preferences.getString(PREF_URL, "http://www.youtube.com");
-            playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
-            webView.loadUrl(lastVideoUrl);
-            toggleControlsVisibility();
+            webView.evaluateJavascript(
+                    "(function() {" +
+                            "var videos = document.querySelectorAll('video');" +
+                            "videos.forEach(function(video) {" +
+                            "video.style = '';" + // Убираем стили
+                            "});" +
+                            "for (var i = 0; i < document.body.children.length; i++) {" +
+                            "document.body.children[i].style.display = '';" +
+                            "}" +
+                            "var topBar = document.querySelector('ytd-masthead');" +
+                            "if (topBar) { topBar.style.display = ''; }" +
+                            "document.documentElement.style.overflow = '';" +
+                            "document.body.style.margin = '';" +
+                            "document.body.style.padding = '';" +
+                            "})();",
+                    null
+            );
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
         }
     }
 
