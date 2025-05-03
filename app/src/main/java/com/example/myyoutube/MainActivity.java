@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CODE = 101;
+    final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
     static final String PREFS_NAME = "WebViewPrefs";
     static final String PREF_URL = "url";
@@ -59,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private final int speedUpdateInterval = 2000;
 
     private JoystickView joystickView;
-    private static final float MAX_PLAYBACK_RATE = 3.0f;
-    private static final float REWIND_MULTIPLIER = 10.0f;
+
     private Handler joystickHandler;
     private Runnable joystickRunnable;
     private boolean isJoystickActive = false;
@@ -154,42 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 saveLastVideoUrl(url);
                 applyPlaybackSpeed(playbackSpeed);
 
-                // More aggressive subtitle disabling
-                webView.evaluateJavascript(
-                        "function disableSubtitles() {" +
-                                // Method 1: Direct HTML5 video track disabling
-                                "  var video = document.querySelector('video');" +
-                                "  if(video && video.textTracks) {" +
-                                "    for(var i = 0; i < video.textTracks.length; i++) {" +
-                                "      video.textTracks[i].mode = 'disabled';" +
-                                "    }" +
-                                "  }" +
-                                // Method 2: YouTube specific button
-                                "  var ccButton = document.querySelector('.ytp-subtitles-button');" +
-                                "  if(ccButton && ccButton.getAttribute('aria-pressed') === 'true') {" +
-                                "    ccButton.click();" +
-                                "  }" +
-                                // Method 3: YouTube settings menu
-                                "  var subtitlesMenuItem = document.querySelector('[role=\"menuitem\"][aria-label*=\"subtitles\"]');" +
-                                "  if(subtitlesMenuItem) {" +
-                                "    subtitlesMenuItem.click();" +
-                                "  }" +
-                                // Method 4: Remove caption elements
-                                "  var captionWindow = document.querySelector('.ytp-caption-window-container');" +
-                                "  if(captionWindow) {" +
-                                "    captionWindow.style.display = 'none';" +
-                                "  }" +
-                                "}" +
-                                // Run immediately
-                                "disableSubtitles();" +
-                                // Run periodically
-                                "setInterval(disableSubtitles, 500);" +
-                                // Also run when video source changes
-                                "if(video) {" +
-                                "  video.addEventListener('loadeddata', disableSubtitles);" +
-                                "}",
-                        null
-                );
+                JavaScript.makeSubtitleOf(webView);
+
             }
         });
 
@@ -456,12 +422,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (isJoystickActive) {
-                    webView.evaluateJavascript(
-                            "var video = document.querySelector('video');" +
-                                    "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
-                            null
-                    );
-                    joystickHandler.postDelayed(this, 200); // Update every 100ms
+                    JavaScript.makeJoystick(webView,1,1);
+                    joystickHandler.postDelayed(this, 200);
                 }
             }
         };
@@ -473,29 +435,13 @@ public class MainActivity extends AppCompatActivity {
                     isJoystickActive = true;
                     joystickHandler.post(joystickRunnable);
                 }
-
-                // X-axis controls seeking speed
-                float seekValue = xPercent * REWIND_MULTIPLIER;
-
-                webView.evaluateJavascript(
-                        "window.joystickSeekValue = " + seekValue + ";" +
-                                "var video = document.querySelector('video');" +
-                                "if(video) {" +
-                                "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
-                                "}",
-                        null
-                );
+                JavaScript.makeJoystick(webView,2, xPercent);
             }
 
             @Override
             public void onJoystickReleased() {
                 isJoystickActive = false;
-                webView.evaluateJavascript(
-                        "window.joystickSeekValue = 0;" +
-                                "var video = document.querySelector('video');" +
-                                "if(video) { video.playbackRate = 1.0; }",
-                        null
-                );
+               JavaScript.makeJoystick(webView,3,3);
             }
         });
     }

@@ -1,9 +1,11 @@
 package com.example.myyoutube;
 
+
+
 import android.webkit.WebView;
 
 public class JavaScript {
-    public static void videoFullScreen(WebView webView){
+    public static void videoFullScreen(WebView webView) {
         webView.evaluateJavascript(
                 "(function() { " +
                         // Ваш первый скрипт
@@ -42,7 +44,7 @@ public class JavaScript {
     }
 
 
-    public static void videoFullScreenCancel(WebView webView){
+    public static void videoFullScreenCancel(WebView webView) {
         webView.evaluateJavascript(
                 "(function() {" +
                         "var videos = document.querySelectorAll('video');" +
@@ -64,6 +66,78 @@ public class JavaScript {
     }
 
 
+    public static void makeSubtitleOf(WebView webView) {
+        webView.evaluateJavascript(
+                "function disableSubtitles() {" +
+                        // Method 1: Direct HTML5 video track disabling
+                        "  var video = document.querySelector('video');" +
+                        "  if(video && video.textTracks) {" +
+                        "    for(var i = 0; i < video.textTracks.length; i++) {" +
+                        "      video.textTracks[i].mode = 'disabled';" +
+                        "    }" +
+                        "  }" +
+                        // Method 2: YouTube specific button
+                        "  var ccButton = document.querySelector('.ytp-subtitles-button');" +
+                        "  if(ccButton && ccButton.getAttribute('aria-pressed') === 'true') {" +
+                        "    ccButton.click();" +
+                        "  }" +
+                        // Method 3: YouTube settings menu
+                        "  var subtitlesMenuItem = document.querySelector('[role=\"menuitem\"][aria-label*=\"subtitles\"]');" +
+                        "  if(subtitlesMenuItem) {" +
+                        "    subtitlesMenuItem.click();" +
+                        "  }" +
+                        // Method 4: Remove caption elements
+                        "  var captionWindow = document.querySelector('.ytp-caption-window-container');" +
+                        "  if(captionWindow) {" +
+                        "    captionWindow.style.display = 'none';" +
+                        "  }" +
+                        "}" +
+                        // Run immediately
+                        "disableSubtitles();" +
+                        // Run periodically
+                        "setInterval(disableSubtitles, 500);" +
+                        // Also run when video source changes
+                        "if(video) {" +
+                        "  video.addEventListener('loadeddata', disableSubtitles);" +
+                        "}",
+                null
+        );
+        //make subtitle off on the video
+    }
 
 
+    public static void makeJoystick(WebView webView, int numberMethods, float xPercent) {
+
+        final float REWIND_MULTIPLIER = 10.0f;
+        if (numberMethods == 1) {
+            webView.evaluateJavascript(
+                    "var video = document.querySelector('video');" +
+                            "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
+                    null
+            );
+            // fast forward
+        } else if (numberMethods == 2) {
+            // X-axis controls seeking speed
+            float seekValue = xPercent * REWIND_MULTIPLIER;
+
+            webView.evaluateJavascript(
+                    "window.joystickSeekValue = " + seekValue + ";" +
+                            "var video = document.querySelector('video');" +
+                            "if(video) {" +
+                            "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
+                            "}",
+                    null
+            );
+            // rewind video
+
+        } else if (numberMethods == 3) {
+            webView.evaluateJavascript(
+                    "window.joystickSeekValue = 0;" +
+                            "var video = document.querySelector('video');" +
+                            "if(video) { video.playbackRate = 1.0; }",
+                    null
+            );
+            // stop joystick
+        }
+    }
 }
