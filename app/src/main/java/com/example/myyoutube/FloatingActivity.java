@@ -42,7 +42,7 @@ public class FloatingActivity extends AppCompatActivity {
     private LinearLayout sizeControlLayout;
     private SeekBar sizeSeekBar;
     private boolean isSizeControlVisible = false;
-    private Button btnDownload;
+    private Button btnDownload, speedBtn;
     private Button btnMove;
 
     private WindowManager windowManager;
@@ -99,10 +99,11 @@ public class FloatingActivity extends AppCompatActivity {
         sizeSeekBar = view.findViewById(R.id.sizeSeekBar);
         btnDownload = view.findViewById(R.id.btnDownload);
         btnMove = view.findViewById(R.id.btnMove);
+        speedBtn = view.findViewById(R.id.btnSpeed);
 
         // Setup WebView
-        initializeWebView();
-        loadVideoUrlFromIntent();
+        SaveAndLoadLastVideo.initializeWebView(webView,this);
+
 
         // Setup size control
         setupSizeControl();
@@ -114,10 +115,10 @@ public class FloatingActivity extends AppCompatActivity {
             finish();
         });
         view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
-        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> showSpeedDialog());
+        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn,webView,this));
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
-        view.findViewById(R.id.btnDownload).setOnClickListener(v -> downloadCurrentVideo());
+        view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this,webView));
 
         // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible
@@ -161,83 +162,12 @@ public class FloatingActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         // Reload video URL from new intent
-        loadVideoUrlFromIntent();
+
     }
 
-    private void initializeWebView() {
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setMediaPlaybackRequiresUserGesture(false);
-        webSettings.setAllowContentAccess(true);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setLoadsImagesAutomatically(true);
 
-        // Enable hardware acceleration
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptCookie(true);
-        cookieManager.setAcceptThirdPartyCookies(webView, true);
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                // Inject JavaScript to keep video playing in background
-                webView.evaluateJavascript(
-                    "javascript:(function() {" +
-                    "    var video = document.querySelector('video');" +
-                    "    if(video) {" +
-                    "        video.addEventListener('play', function() {" +
-                    "            video.setAttribute('keepalive', 'true');" +
-                    "        });" +
-                    "    }" +
-                    "})();", null
-                );
-            }
-        });
-    }
-
-    private void loadVideoUrlFromIntent() {
-        String videoUrl = getIntent().getStringExtra("video_url");
-        loadVideoInPlayer(videoUrl);
-    }
-
-    private void loadVideoInPlayer(String videoUrl) {
-        if (videoUrl != null && !videoUrl.isEmpty()) {
-            if (videoUrl.contains("googlevideo.com/videoplayback")) {
-                // Extract title from URL parameters
-                String title = "";
-                if (videoUrl.contains("title=")) {
-                    try {
-                        String[] params = videoUrl.split("&");
-                        for (String param : params) {
-                            if (param.startsWith("title=")) {
-                                title = param.substring(6).replace("+", " ");
-                                title = java.net.URLDecoder.decode(title, "UTF-8");
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        title = "Video";
-                    }
-                }
-
-                // For direct video URLs, create a custom HTML page with video player
-                String customHtml = "<html><body style='margin:0; padding:0; background:black;'>" +
-                                  "<div style='color:white; padding:10px; font-family:Arial;'>" + title + "</div>" +
-                                  "<video style='width:100%; height:calc(100% - 40px);' controls autoplay>" +
-                                  "<source src='" + videoUrl + "' type='video/mp4'>" +
-                                  "</video></body></html>";
-                webView.loadData(customHtml, "text/html", "UTF-8");
-            } else {
-                webView.loadUrl(videoUrl);
-            }
-        } else {
-            webView.loadUrl("https://www.youtube.com");
-        }
-    }
 
     private void skipThreeMinutes() {
         webView.evaluateJavascript("document.querySelector('video').currentTime += " + skipTime + ";", null);
@@ -250,88 +180,15 @@ public class FloatingActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                checkAndSkipAds();
-                skipVideo();
+                SkipaAdd.checkAndSkipAdsF(webView);
+                SkipaAdd.skipVideoF(webView);
                 handler.postDelayed(this, 1000);
             }
         }, 1000);
     }
 
-    private void checkAndSkipAds() {
-        // Check and skip ads (if applicable)
-        webView.evaluateJavascript("javascript:(function() {" +
-                "const skipButton = document.querySelector('button[class*=\"ytp-ad-skip-button\"]');" +
-                "if (skipButton) {" +
-                "skipButton.click();" + // Clicking the skip ad button
-                "const video = document.querySelector('video');" +
-                "if (video) {" +
-                "video.currentTime += 1900; " + // Skip forward by 40 seconds
-                "return 'Реклама пропущена, видео перемотано на 1900 секунд';" +
-                "} else {" +
-                "return 'Видео не найдено, но реклама пропущена';" +
-                "}" +
-                "} else {" +
-                "return 'Кнопка пропуска рекламы не найдена';" +
-                "}" +
-                "})();", value -> {
-            if (value != null && !value.equals("null")) {
 
-            }
-        });
-    }
 
-    private void skipVideo() {
-        webView.evaluateJavascript(
-                "(function() {" +
-                        "var video = document.querySelector('video');" +
-                        "if (video) {" +
-                        "return video.duration;" +
-                        "} else {" +
-                        "return 0;" +
-                        "}" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        try {
-                            double duration = Double.parseDouble(value);
-                            if (duration < 25) { // If video is shorter than 4 seconds
-                                // Skip forward 3 minutes (180 seconds)
-                                webView.evaluateJavascript(
-                                        "var video = document.querySelector('video');" +
-                                                "if (video) {" +
-                                                "var newTime = video.currentTime + 180;" + // Skip forward 3 minutes
-                                                "if (newTime < video.duration) {" +
-                                                "video.currentTime = newTime;" +
-                                                "} else {" +
-                                                "video.currentTime = video.duration;" +
-                                                "}" +
-                                                "}", null);
-                            } else {
-
-                            }
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "Error parsing video duration: " + e.getMessage());
-                        }
-                    }
-                });
-    }
-
-    private void showSpeedDialog() {
-        // Cycle through the speeds: 1x -> 2x -> 3x -> 1x
-        if (playbackSpeed == 1.0f) {
-            playbackSpeed = 2.0f; // Change to 2x
-        } else if (playbackSpeed == 2.0f) {
-            playbackSpeed = 3.0f; // Change to 3x
-        } else {
-            playbackSpeed = 1.0f; // Change back to 1x
-        }
-
-        applyPlaybackSpeed(playbackSpeed);
-    }
-
-    private void applyPlaybackSpeed(float speed) {
-        webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
-    }
 
     private void toggleLooping() {
         // Toggle the looping state
@@ -394,30 +251,7 @@ public class FloatingActivity extends AppCompatActivity {
     }
 
 
-    private void downloadCurrentVideo() {
-        String currentUrl = getIntent().getStringExtra("video_url");
 
-        if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            loadVideoInPlayer(currentUrl);
-            Toast.makeText(this, "Loading video...", Toast.LENGTH_SHORT).show();
-        } else {
-            try {
-                // Encode the video URL
-                String encodedUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
-
-                // Construct the SaveFrom.net URL with the video link
-                String saveFromUrl = "https://uk.savefrom.net/1-youtube-video-downloader.html?url=" + encodedUrl;
-
-                // Open the URL in the browser
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(saveFromUrl));
-                startActivity(intent);
-
-                Toast.makeText(this, "Opening SaveFrom.net in the browser...", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Error opening URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
 
 
