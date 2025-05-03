@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
-     // In both MainActivity and FloatingActivity
-
     private SkipaAdd skipaAdd;
     private ShowSkipDialog showSkipDialog;
     private static final int ONE_MINUTE = 60;
@@ -43,23 +41,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int FIVE_MINUTES = 900;
     private boolean isControlVisible = true;  // Инициализация переменной
     private LinearLayout controlsLayout;
-
     private WebView webView;
     private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
     private Handler handler;
-
     private boolean isLooping = false;
-
     private boolean isTimerRunning = true;
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
-
     private final int speedUpdateInterval = 2000;
-
-
-
-
     private boolean isLandscape = false;
 
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
@@ -102,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         Joystick.setupJoystickControl(webView);
 
         // Initialize the WebView and load last saved URL
-        SaveAndLoadLastVideo.initializeWebView(webView,this,this);
+        SaveAndLoadLastVideo.initializeWebView(webView, this, this);
 
         setupButtonListeners();
         startSpeedUpdateTimer();
@@ -129,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
         // Сохраняем необходимые данные, например:
         outState.putBoolean("isControlVisible", isControlVisible);
     }
-
-
 
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -306,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 if (SaveAndLoadLastVideo.shouldCheckDuration) {
                     skipaAdd.skipVideo();
                     skipaAdd.checkVideoDuration();
-                    SaveAndLoadLastVideo.saveLastVideoUrl(webView.getUrl(),MainActivity.this);
+                    SaveAndLoadLastVideo.saveLastVideoUrl(webView.getUrl(), MainActivity.this);
                     handler.postDelayed(this, 1000);
                 }
             }
