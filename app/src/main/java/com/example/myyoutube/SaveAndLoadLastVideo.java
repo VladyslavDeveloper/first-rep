@@ -16,7 +16,7 @@ public class SaveAndLoadLastVideo {
     public static boolean shouldCheckDuration = false;
     public static float playbackSpeed = 1.0f;
 
-    public static void initializeWebView(WebView webView,Context context,MainActivity mainActivity) {
+    public static void initializeWebView(WebView webView,Context context) {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -33,7 +33,7 @@ public class SaveAndLoadLastVideo {
                 shouldCheckDuration = true;
                 TimerExecution.startDurationCheck(webView,context);
                 SaveAndLoadLastVideo.saveLastVideoUrl(url,context);
-                mainActivity.applyPlaybackSpeed(playbackSpeed);
+                SpeedPlayback.applyPlaybackSpeed(playbackSpeed, webView);
 
                 JavaScript.makeSubtitleOf(webView);
 

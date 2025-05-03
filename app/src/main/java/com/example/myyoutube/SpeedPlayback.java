@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.webkit.WebView;
 import android.widget.Button;
 
 public class SpeedPlayback {
@@ -13,7 +14,7 @@ public class SpeedPlayback {
     public static boolean isTimerRunning = true;
 
 
-    public static void cyclePlaybackSpeed(Button btnSpeed, MainActivity mainActivity,Context context) {
+    public static void cyclePlaybackSpeed(Button btnSpeed, WebView webView,Context context) {
         switch ((int) SaveAndLoadLastVideo.playbackSpeed) {
             case 1:
                 SaveAndLoadLastVideo.playbackSpeed = 2.0f;
@@ -27,7 +28,7 @@ public class SpeedPlayback {
         }
         btnSpeed.setText(SaveAndLoadLastVideo.playbackSpeed + "x Speed");
         savePlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed, context);
-        mainActivity.applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
+        applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed, webView);
     }
 
     private static void savePlaybackSpeed(float speed, Context context) {
@@ -36,7 +37,7 @@ public class SpeedPlayback {
         editor.putFloat(SaveAndLoadLastVideo.PREF_SPEED, speed);
         editor.apply();
     }
-    public void startSpeedUpdateTimer(MainActivity mainActivity) {
+    public void startSpeedUpdateTimer(WebView webView) {
         if (handler == null) {
             handler = new Handler();
         }
@@ -44,10 +45,14 @@ public class SpeedPlayback {
             @Override
             public void run() {
                 if (isTimerRunning) {
-                    mainActivity.applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
+                    applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed,webView);
                     handler.postDelayed(this, speedUpdateInterval);
                 }
             }
         }, speedUpdateInterval);
+    }
+
+    public static void applyPlaybackSpeed(float speed, WebView webView) {
+        webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
     }
 }

@@ -82,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         Joystick.setupJoystickControl(webView);
 
         // Initialize the WebView and load last saved URL
-        SaveAndLoadLastVideo.initializeWebView(webView, this, this);
+        SaveAndLoadLastVideo.initializeWebView(webView, this);
 
         setupButtonListeners();
-        speedPlayback.startSpeedUpdateTimer(MainActivity.this);
+        speedPlayback.startSpeedUpdateTimer(webView);
 
     }
 
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         btnSpeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpeedPlayback.cyclePlaybackSpeed(btnSpeed,MainActivity.this, MainActivity.this);
+                SpeedPlayback.cyclePlaybackSpeed(btnSpeed,webView, MainActivity.this);
             }
         });
 
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SpeedPlayback.isTimerRunning = !SpeedPlayback.isTimerRunning;
                 if (SpeedPlayback.isTimerRunning) {
-                    speedPlayback.startSpeedUpdateTimer(MainActivity.this);
+                    speedPlayback.startSpeedUpdateTimer(webView);
                     btnTimer.setText("on");
                 } else {
                     if (TimerExecution.handler != null) {
@@ -235,9 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void applyPlaybackSpeed(float speed) {
-        webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
-    }
+
 
 
 
