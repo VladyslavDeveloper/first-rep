@@ -57,11 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final int speedUpdateInterval = 2000;
 
-    private JoystickView joystickView;
 
-    private Handler joystickHandler;
-    private Runnable joystickRunnable;
-    private boolean isJoystickActive = false;
+
 
     private boolean isLandscape = false;
 
@@ -101,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        joystickView = findViewById(R.id.joystickView);
-        setupJoystickControl();
+        Joystick.joystickView = findViewById(R.id.joystickView);
+        Joystick.setupJoystickControl(webView);
 
         // Initialize the WebView and load last saved URL
         SaveAndLoadLastVideo.initializeWebView(webView,this,this);
@@ -318,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void visibleOf() {
         controlsLayout.setVisibility(View.GONE);
-        joystickView.setVisibility(View.GONE);
+        Joystick.joystickView.setVisibility(View.GONE);
         // Set video container height to 0dp
         FrameLayout videoContainer = findViewById(R.id.controls_scroll);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
@@ -331,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
             visibleOf();
         } else {
             controlsLayout.setVisibility(View.VISIBLE);
-            joystickView.setVisibility(View.VISIBLE);
+            Joystick.joystickView.setVisibility(View.VISIBLE);
             // Optionally set video container height back to wrap_content or desired height
             FrameLayout videoContainer = findViewById(R.id.controls_scroll);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
@@ -379,41 +376,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupJoystickControl() {
-        joystickHandler = new Handler();
-        joystickRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isJoystickActive) {
-                    JavaScript.makeJoystick(webView,1,1);
-                    joystickHandler.postDelayed(this, 200);
-                }
-            }
-        };
-
-        joystickView.setJoystickListener(new JoystickView.JoystickListener() {
-            @Override
-            public void onJoystickMoved(float xPercent, float yPercent) {
-                if (!isJoystickActive) {
-                    isJoystickActive = true;
-                    joystickHandler.post(joystickRunnable);
-                }
-                JavaScript.makeJoystick(webView,2, xPercent);
-            }
-
-            @Override
-            public void onJoystickReleased() {
-                isJoystickActive = false;
-               JavaScript.makeJoystick(webView,3,3);
-            }
-        });
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (joystickHandler != null) {
-            joystickHandler.removeCallbacks(joystickRunnable);
+        if (Joystick.joystickHandler != null) {
+            Joystick.joystickHandler.removeCallbacks(Joystick.joystickRunnable);
         }
     }
 
