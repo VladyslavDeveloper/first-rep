@@ -123,18 +123,10 @@
                 android:layout_marginStart="1dp"
                 android:backgroundTint="#5F6060"
                 android:padding="5dp"
-                android:text="👨‍💻"
+                android:text="🔍"
                 android:textColor="#BBFD78" />
 
-            <Button
-                android:id="@+id/btnTimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="⏰"
-                android:textColor="#BBFD78" />
+
 
             <Button
                 android:id="@+id/btnRotate"
@@ -143,7 +135,16 @@
                 android:layout_marginStart="1dp"
                 android:backgroundTint="#5F6060"
                 android:padding="5dp"
-                android:text="📱"
+                android:text="🔄"
+                android:textColor="#BBFD78" />
+            <Button
+                android:id="@+id/btnTimer"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:backgroundTint="#5F6060"
+                android:padding="5dp"
+                android:text="⏰"
                 android:textColor="#BBFD78" />
 
         </LinearLayout>

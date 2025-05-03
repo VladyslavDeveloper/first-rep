@@ -123,10 +123,20 @@ public class Buttons {
         });
         btnVoiceSearch.setOnClickListener(v -> VoiceSearch.startVoiceSearch(activity));
         btnRotate.setOnClickListener(new View.OnClickListener() {
+            boolean isHorizontal = true; // по умолчанию включена
+
             @Override
             public void onClick(View v) {
                 ControlOrientationHorizontal.toggleOrientation(activity);
+                isHorizontal = !isHorizontal;
+
+                if (isHorizontal) {
+                    btnRotate.setText("\uD83D\uDD04❌"); // включено
+                } else {
+                    btnRotate.setText("\uD83D\uDD04✅"); // выключено
+                }
             }
         });
+
     }
 }
