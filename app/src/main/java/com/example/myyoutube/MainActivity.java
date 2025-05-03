@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
     private static final int FIVE_MINUTES = 900;
-    private boolean isControlVisible = true;  // Инициализация переменной
-    private LinearLayout controlsLayout;
+     private LinearLayout controlsLayout;
     private WebView webView;
     private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
@@ -96,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             // Восстанавливаем данные
-            isControlVisible = savedInstanceState.getBoolean("isControlVisible");
+            PanelVisible.isControlVisible = savedInstanceState.getBoolean("isControlVisible");
 
             // Применяем состояние (например, показываем или скрываем элементы управления)
-            toggleControlsVisibility();
+            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);
         }
     }
 
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         // Сохраняем необходимые данные, например:
-        outState.putBoolean("isControlVisible", isControlVisible);
+        outState.putBoolean("isControlVisible", PanelVisible.isControlVisible);
     }
 
 
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         // If the button was pressed for too short a time (like a tap), trigger a click function
                         if (System.currentTimeMillis() - downTime[0] < 200) { // 200ms threshold for tap
-                            toggleControlsVisibility();  // Call your function
+                            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);  // Call your function
                         }
                         return true;
 
@@ -166,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Handle the click action here (if not already handled by touch listener)
-                toggleControlsVisibility();
+                PanelVisible.toggleControlsVisibility(controlsLayout, MainActivity.this);
             }
         });
 
@@ -243,29 +242,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void visibleOf() {
-        controlsLayout.setVisibility(View.GONE);
-        Joystick.joystickView.setVisibility(View.GONE);
-        // Set video container height to 0dp
-        FrameLayout videoContainer = findViewById(R.id.controls_scroll);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
-        params.height = 0; // Set height to 0dp
-        videoContainer.setLayoutParams(params);
-    }
 
-    private void toggleControlsVisibility() {
-        if (controlsLayout.getVisibility() == View.VISIBLE) {
-            visibleOf();
-        } else {
-            controlsLayout.setVisibility(View.VISIBLE);
-            Joystick.joystickView.setVisibility(View.VISIBLE);
-            // Optionally set video container height back to wrap_content or desired height
-            FrameLayout videoContainer = findViewById(R.id.controls_scroll);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
-            params.height = 234;
-            videoContainer.setLayoutParams(params);
-        }
-    }
 
     private void checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -334,12 +311,12 @@ public class MainActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
             JavaScript.videoFullScreen(webView);
 
-            visibleOf();
+            PanelVisible.visibleOf(controlsLayout,MainActivity.this);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             JavaScript.videoFullScreenCancel(webView);
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
-            toggleControlsVisibility();
+            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);
         }
     }
 
