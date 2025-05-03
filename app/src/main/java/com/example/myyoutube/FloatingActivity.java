@@ -92,6 +92,7 @@ public class FloatingActivity extends AppCompatActivity {
         View view = inflater.inflate(R.layout.activity_floating, null);
         windowManager.addView(view, params);
 
+
         // Initialize UI elements
         linearLayout1 = view.findViewById(R.id.linearLayout1);
         webView = view.findViewById(R.id.webView);
@@ -117,11 +118,12 @@ public class FloatingActivity extends AppCompatActivity {
         view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
         view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn,webView,this));
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
-        view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> startVoiceSearch());
+        view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this,webView));
 
         // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible
+
         btnMove.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -209,25 +211,14 @@ public class FloatingActivity extends AppCompatActivity {
             Toast.makeText(this, "Speech recognition is not supported on this device", Toast.LENGTH_SHORT).show();
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (results != null && !results.isEmpty()) {
-                openYouTubeSearch(results.get(0));
-            } else {
-                Toast.makeText(this, "No voice input detected", Toast.LENGTH_SHORT).show();
-            }
-        }
+        VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
 
-    private void openYouTubeSearch(String query) {
-        String searchUrl = "https://www.youtube.com/results?search_query=" + query.replace(" ", "+");
-        webView.loadUrl(searchUrl);
-    }
+
+
 
     private void setupSizeControl() {
         int screenHeight = getResources().getDisplayMetrics().heightPixels;

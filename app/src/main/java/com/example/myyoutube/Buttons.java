@@ -10,7 +10,7 @@ import android.widget.Button;
 public class Buttons {
     private static ShowSkipDialog showSkipDialog;
     private static boolean isLooping = false;
-    public  static  void  makeButtons(Context context,View controlsLayout, Activity activity, WebView webView, Button btnSpeed, Button btnSkip4sec, Button btnLoop, Button btnTimer, Button btnRotate){
+    public  static  void  makeButtons(Context context,View controlsLayout, Activity activity, WebView webView, Button btnSpeed, Button btnSkip4sec, Button btnLoop, Button btnTimer, Button btnRotate, Button btnVoiceSearch, Button btnRecentVideos){
 
         showSkipDialog = new ShowSkipDialog(activity, webView);
         btnSpeed.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +83,12 @@ public class Buttons {
                 OpenFloatingActivity.checkOverlayPermission(context,activity,webView);
             }
         });
-
+        btnRecentVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LookLastVideo.showSearchChannel(activity, webView);
+            }
+        });
         btnSkip4sec.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -116,7 +121,7 @@ public class Buttons {
                 }
             }
         });
-
+        btnVoiceSearch.setOnClickListener(v -> VoiceSearch.startVoiceSearch(activity));
         btnRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

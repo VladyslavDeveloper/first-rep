@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout controlsLayout;
     private WebView webView;
-    private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
 
@@ -40,26 +39,10 @@ public class MainActivity extends AppCompatActivity {
         btnTimer = findViewById(R.id.btnTimer);
         btnRotate = findViewById(R.id.btnRotate);
         btnRecentVideos = findViewById(R.id.btnRecentVideos);
+        btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
         speedPlayback = new SpeedPlayback();
 
-        voiceSearch = new VoiceSearch(this, webView);
 
-        btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
-
-        btnVoiceSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                voiceSearch.startVoiceSearch();
-            }
-        });
-
-        // Set click listener for recent videos button
-        btnRecentVideos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LookLastVideo.showSearchChannel(MainActivity.this, webView);
-            }
-        });
 
         Joystick.joystickView = findViewById(R.id.joystickView);
         Joystick.setupJoystickControl(webView);
@@ -96,15 +79,16 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
-        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate);
+        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate,btnVoiceSearch,btnRecentVideos);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        voiceSearch.handleActivityResult(requestCode, resultCode, data);
+        VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
+
 
 
     @Override
