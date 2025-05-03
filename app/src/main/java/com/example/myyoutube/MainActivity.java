@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLooping = false;
 
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
-      private boolean isLandscape = false;
 
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
     @Override
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         btnRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleOrientation();
+                ControlOrientationHorizontal.toggleOrientation(MainActivity.this);
             }
         });
     }
@@ -265,32 +264,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void toggleOrientation() {
-        isLandscape = !isLandscape;
-        if (isLandscape) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
 
-
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        }
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-            JavaScript.videoFullScreen(webView);
-
-            PanelVisible.visibleOf(controlsLayout,MainActivity.this);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            JavaScript.videoFullScreenCancel(webView);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
-            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);
-        }
+        ControlOrientationHorizontal.changeOrientation(controlsLayout,webView,MainActivity.this,newConfig);
     }
 
 
