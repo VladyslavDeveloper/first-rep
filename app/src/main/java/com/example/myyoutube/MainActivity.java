@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.pm.ActivityInfo;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     // In both MainActivity and FloatingActivity
     public static final String PREF_SPEED = "playback_speed";
     private SkipaAdd skipaAdd;
-    private ShowSkipDialog showSkipDialog ;
+    private ShowSkipDialog showSkipDialog;
     private static final int ONE_MINUTE = 60;
     private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
@@ -81,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
         btnRotate = findViewById(R.id.btnRotate);
         btnRecentVideos = findViewById(R.id.btnRecentVideos);
 
-        showSkipDialog = new ShowSkipDialog(this,webView);
+        showSkipDialog = new ShowSkipDialog(this, webView);
         skipaAdd = new SkipaAdd(this, webView);
-        voiceSearch = new VoiceSearch(this,webView);
+        voiceSearch = new VoiceSearch(this, webView);
 
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
 
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecentVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LookLastVideo.showSearchChannel(MainActivity.this,webView);
+                LookLastVideo.showSearchChannel(MainActivity.this, webView);
             }
         });
 
@@ -155,39 +156,39 @@ public class MainActivity extends AppCompatActivity {
 
                 // More aggressive subtitle disabling
                 webView.evaluateJavascript(
-                    "function disableSubtitles() {" +
-                    // Method 1: Direct HTML5 video track disabling
-                    "  var video = document.querySelector('video');" +
-                    "  if(video && video.textTracks) {" +
-                    "    for(var i = 0; i < video.textTracks.length; i++) {" +
-                    "      video.textTracks[i].mode = 'disabled';" +
-                    "    }" +
-                    "  }" +
-                    // Method 2: YouTube specific button
-                    "  var ccButton = document.querySelector('.ytp-subtitles-button');" +
-                    "  if(ccButton && ccButton.getAttribute('aria-pressed') === 'true') {" +
-                    "    ccButton.click();" +
-                    "  }" +
-                    // Method 3: YouTube settings menu
-                    "  var subtitlesMenuItem = document.querySelector('[role=\"menuitem\"][aria-label*=\"subtitles\"]');" +
-                    "  if(subtitlesMenuItem) {" +
-                    "    subtitlesMenuItem.click();" +
-                    "  }" +
-                    // Method 4: Remove caption elements
-                    "  var captionWindow = document.querySelector('.ytp-caption-window-container');" +
-                    "  if(captionWindow) {" +
-                    "    captionWindow.style.display = 'none';" +
-                    "  }" +
-                    "}" +
-                    // Run immediately
-                    "disableSubtitles();" +
-                    // Run periodically
-                    "setInterval(disableSubtitles, 500);" +
-                    // Also run when video source changes
-                    "if(video) {" +
-                    "  video.addEventListener('loadeddata', disableSubtitles);" +
-                    "}",
-                    null
+                        "function disableSubtitles() {" +
+                                // Method 1: Direct HTML5 video track disabling
+                                "  var video = document.querySelector('video');" +
+                                "  if(video && video.textTracks) {" +
+                                "    for(var i = 0; i < video.textTracks.length; i++) {" +
+                                "      video.textTracks[i].mode = 'disabled';" +
+                                "    }" +
+                                "  }" +
+                                // Method 2: YouTube specific button
+                                "  var ccButton = document.querySelector('.ytp-subtitles-button');" +
+                                "  if(ccButton && ccButton.getAttribute('aria-pressed') === 'true') {" +
+                                "    ccButton.click();" +
+                                "  }" +
+                                // Method 3: YouTube settings menu
+                                "  var subtitlesMenuItem = document.querySelector('[role=\"menuitem\"][aria-label*=\"subtitles\"]');" +
+                                "  if(subtitlesMenuItem) {" +
+                                "    subtitlesMenuItem.click();" +
+                                "  }" +
+                                // Method 4: Remove caption elements
+                                "  var captionWindow = document.querySelector('.ytp-caption-window-container');" +
+                                "  if(captionWindow) {" +
+                                "    captionWindow.style.display = 'none';" +
+                                "  }" +
+                                "}" +
+                                // Run immediately
+                                "disableSubtitles();" +
+                                // Run periodically
+                                "setInterval(disableSubtitles, 500);" +
+                                // Also run when video source changes
+                                "if(video) {" +
+                                "  video.addEventListener('loadeddata', disableSubtitles);" +
+                                "}",
+                        null
                 );
             }
         });
@@ -386,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         }, 1000);
     }
 
-    private void visibleOf(){
+    private void visibleOf() {
         controlsLayout.setVisibility(View.GONE);
         joystickView.setVisibility(View.GONE);
         // Set video container height to 0dp
@@ -395,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
         params.height = 0; // Set height to 0dp
         videoContainer.setLayoutParams(params);
     }
+
     private void toggleControlsVisibility() {
         if (controlsLayout.getVisibility() == View.VISIBLE) {
             visibleOf();
@@ -455,9 +457,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if (isJoystickActive) {
                     webView.evaluateJavascript(
-                        "var video = document.querySelector('video');" +
-                        "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
-                        null
+                            "var video = document.querySelector('video');" +
+                                    "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
+                            null
                     );
                     joystickHandler.postDelayed(this, 200); // Update every 100ms
                 }
@@ -474,14 +476,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // X-axis controls seeking speed
                 float seekValue = xPercent * REWIND_MULTIPLIER;
-                
+
                 webView.evaluateJavascript(
-                    "window.joystickSeekValue = " + seekValue + ";" +
-                    "var video = document.querySelector('video');" +
-                    "if(video) {" +
-                    "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
-                    "}",
-                    null
+                        "window.joystickSeekValue = " + seekValue + ";" +
+                                "var video = document.querySelector('video');" +
+                                "if(video) {" +
+                                "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
+                                "}",
+                        null
                 );
             }
 
@@ -489,10 +491,10 @@ public class MainActivity extends AppCompatActivity {
             public void onJoystickReleased() {
                 isJoystickActive = false;
                 webView.evaluateJavascript(
-                    "window.joystickSeekValue = 0;" +
-                    "var video = document.querySelector('video');" +
-                    "if(video) { video.playbackRate = 1.0; }",
-                    null
+                        "window.joystickSeekValue = 0;" +
+                                "var video = document.querySelector('video');" +
+                                "if(video) { video.playbackRate = 1.0; }",
+                        null
                 );
             }
         });
@@ -522,73 +524,17 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-               getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+            JavaScript.videoFullScreen(webView);
 
-
-                    webView.evaluateJavascript(
-                            "(function() { " +
-                                    // Ваш первый скрипт
-                                    "var videos = document.querySelectorAll('video');" +
-                                    "for (var i = 0; i < document.body.children.length; i++) {" +
-                                    "var el = document.body.children[i];" +
-                                    "if (!el.querySelector('video')) { el.style.display = 'none'; }" +
-                                    "}" +
-                                    "document.documentElement.style.overflow = 'auto';" + // Разрешает прокрутку, если она необходима
-
-                            "document.body.style.margin = '0';" +
-                                    "document.body.style.padding = '0';" +
-
-
-                            "videos.forEach(function(video) {" +
-                                    "video.style.position = 'fixed';" +
-                                    "video.style.top = '20';" +
-                                    "video.style.left = '8';" +
-                                    "video.style.width = '80vw';" +
-                                    "video.style.height = '100vh';" +
-                                    "video.style.zIndex = '9999';" +
-                                    "video.style.objectFit = 'cover';" +
-                                    "});" +
-
-                                    // Ваш второй скрипт для скрытия верхней панели
-                                    "var topBar = document.querySelector('ytd-masthead');" +
-                                    "if (topBar) { " +  // Если панель найдена
-                                    "topBar.style.display = 'none';" +  // Скрываем панель
-                                    "}" +
-
-                                    "})();",
-                            null
-                    );
-
-
-
-
-
-           visibleOf();
-        }  else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // Отмена всех стилей
-
-            webView.evaluateJavascript(
-                    "(function() {" +
-                            "var videos = document.querySelectorAll('video');" +
-                            "videos.forEach(function(video) {" +
-                            "video.style = '';" + // Убираем стили
-                            "});" +
-                            "for (var i = 0; i < document.body.children.length; i++) {" +
-                            "document.body.children[i].style.display = '';" +
-                            "}" +
-                            "var topBar = document.querySelector('ytd-masthead');" +
-                            "if (topBar) { topBar.style.display = ''; }" +
-                            "document.documentElement.style.overflow = '';" +
-                            "document.body.style.margin = '';" +
-                            "document.body.style.padding = '';" +
-                            "})();",
-                    null
-            );
+            visibleOf();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            JavaScript.videoFullScreenCancel(webView);
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
+            toggleControlsVisibility();
         }
     }
-
 
 
 }

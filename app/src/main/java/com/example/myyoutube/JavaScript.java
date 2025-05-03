@@ -1,0 +1,69 @@
+package com.example.myyoutube;
+
+import android.webkit.WebView;
+
+public class JavaScript {
+    public static void videoFullScreen(WebView webView){
+        webView.evaluateJavascript(
+                "(function() { " +
+                        // Ваш первый скрипт
+                        "var videos = document.querySelectorAll('video');" +
+                        "for (var i = 0; i < document.body.children.length; i++) {" +
+                        "var el = document.body.children[i];" +
+                        "if (!el.querySelector('video')) { el.style.display = 'none'; }" +
+                        "}" +
+                        "document.documentElement.style.overflow = 'auto';" + // Разрешает прокрутку, если она необходима
+
+                        "document.body.style.margin = '0';" +
+                        "document.body.style.padding = '0';" +
+
+
+                        "videos.forEach(function(video) {" +
+                        "video.style.position = 'fixed';" +
+                        "video.style.top = '20';" +
+                        "video.style.left = '8';" +
+                        "video.style.width = '80vw';" +
+                        "video.style.height = '100vh';" +
+                        "video.style.zIndex = '9999';" +
+                        "video.style.objectFit = 'cover';" +
+                        "});" +
+
+                        // Ваш второй скрипт для скрытия верхней панели
+                        "var topBar = document.querySelector('ytd-masthead');" +
+                        "if (topBar) { " +  // Если панель найдена
+                        "topBar.style.display = 'none';" +  // Скрываем панель
+                        "}" +
+
+                        "})();",
+                null
+                // this method make current video on the full screen(delete all except video container)
+        );
+
+    }
+
+
+    public static void videoFullScreenCancel(WebView webView){
+        webView.evaluateJavascript(
+                "(function() {" +
+                        "var videos = document.querySelectorAll('video');" +
+                        "videos.forEach(function(video) {" +
+                        "video.style = '';" + // Убираем стили
+                        "});" +
+                        "for (var i = 0; i < document.body.children.length; i++) {" +
+                        "document.body.children[i].style.display = '';" +
+                        "}" +
+                        "var topBar = document.querySelector('ytd-masthead');" +
+                        "if (topBar) { topBar.style.display = ''; }" +
+                        "document.documentElement.style.overflow = '';" +
+                        "document.body.style.margin = '';" +
+                        "document.body.style.padding = '';" +
+                        "})();",
+                null
+        );
+        // Cancel full screen mode
+    }
+
+
+
+
+}
