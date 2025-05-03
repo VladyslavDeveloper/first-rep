@@ -1,10 +1,8 @@
 package com.example.myyoutube;
 
 import android.annotation.SuppressLint;
-
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -13,20 +11,13 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.pm.ActivityInfo;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -34,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
     private SkipaAdd skipaAdd;
+    SpeedPlayback speedPlayback;
     private ShowSkipDialog showSkipDialog;
     private static final int ONE_MINUTE = 60;
     private static final int TWO_MINUTES = 300;
@@ -47,10 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRecentVideos;
     private Handler handler;
     private boolean isLooping = false;
-    private boolean isTimerRunning = true;
+
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
-    private final int speedUpdateInterval = 2000;
-    private boolean isLandscape = false;
+      private boolean isLandscape = false;
 
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
     @Override
@@ -66,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         btnTimer = findViewById(R.id.btnTimer);
         btnRotate = findViewById(R.id.btnRotate);
         btnRecentVideos = findViewById(R.id.btnRecentVideos);
+        speedPlayback = new SpeedPlayback();
 
         showSkipDialog = new ShowSkipDialog(this, webView);
         skipaAdd = new SkipaAdd(this, webView);
@@ -95,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         SaveAndLoadLastVideo.initializeWebView(webView, this, this);
 
         setupButtonListeners();
-        startSpeedUpdateTimer();
+        speedPlayback.startSpeedUpdateTimer(MainActivity.this);
 
     }
 
@@ -126,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         btnSpeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cyclePlaybackSpeed();
+                SpeedPlayback.cyclePlaybackSpeed(btnSpeed,MainActivity.this, MainActivity.this);
             }
         });
 
@@ -214,9 +206,9 @@ public class MainActivity extends AppCompatActivity {
         btnTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isTimerRunning = !isTimerRunning;
-                if (isTimerRunning) {
-                    startSpeedUpdateTimer();
+                SpeedPlayback.isTimerRunning = !SpeedPlayback.isTimerRunning;
+                if (SpeedPlayback.isTimerRunning) {
+                    speedPlayback.startSpeedUpdateTimer(MainActivity.this);
                     btnTimer.setText("on");
                 } else {
                     if (handler != null) {
@@ -235,22 +227,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void cyclePlaybackSpeed() {
-        switch ((int) SaveAndLoadLastVideo.playbackSpeed) {
-            case 1:
-                SaveAndLoadLastVideo.playbackSpeed = 2.0f;
-                break;
-            case 2:
-                SaveAndLoadLastVideo.playbackSpeed = 3.0f;
-                break;
-            case 3:
-                SaveAndLoadLastVideo.playbackSpeed = 1.0f;
-                break;
-        }
-        btnSpeed.setText(SaveAndLoadLastVideo.playbackSpeed + "x Speed");
-        savePlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
-        applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,31 +235,13 @@ public class MainActivity extends AppCompatActivity {
         voiceSearch.handleActivityResult(requestCode, resultCode, data);
     }
 
-    private void savePlaybackSpeed(float speed) {
-        SharedPreferences preferences = getSharedPreferences(SaveAndLoadLastVideo.PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putFloat(SaveAndLoadLastVideo.PREF_SPEED, speed);
-        editor.apply();
-    }
+
 
     public void applyPlaybackSpeed(float speed) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
     }
 
-    private void startSpeedUpdateTimer() {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isTimerRunning) {
-                    applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
-                    handler.postDelayed(this, speedUpdateInterval);
-                }
-            }
-        }, speedUpdateInterval);
-    }
+
 
     public void startDurationCheck() {
         if (handler == null) {
