@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         btnRecentVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSearchChannel();
+                LookLastVideo.showSearchChannel(MainActivity.this,webView);
             }
         });
 
@@ -589,50 +589,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showSearchChannel() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Search youtube channel or RecentVideos");
-        
-        final EditText input = new EditText(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        input.setLayoutParams(lp);
-        builder.setView(input);
 
-        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String query = input.getText().toString().trim();
-                if (!query.isEmpty()) {
-                    searchRecentVideos(query);
-                }
-            }
-        });
-
-        builder.setNegativeButton("Search Channel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String query = input.getText().toString().trim();
-                if (!query.isEmpty()) {
-                    searchChannel(query);
-                }
-            }
-        });
-
-        builder.show();
-    }
-
-    private void searchChannel(String query) {
-        // Construct the YouTube search URL with recent filter
-        String url = "https://www.youtube.com/results?search_query=" + Uri.encode(query) + "&sp=CAESAhAC";
-        webView.loadUrl(url);
-    }
-    private void searchRecentVideos(String query) {
-        // Конструируем URL с фильтром для видео
-        String url = "https://www.youtube.com/results?search_query=" + Uri.encode(query) + "&sp=EgIQAQ%253D%253D";
-        webView.loadUrl(url);
-    }
 
 }
