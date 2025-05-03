@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CODE = 101;
+
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         btnOpenFloating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkOverlayPermission();
+                OpenFloatingActivity.checkOverlayPermission(MainActivity.this,MainActivity.this,webView);
             }
         });
 
@@ -241,31 +241,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-    private void checkOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, REQUEST_CODE);
-            } else {
-                startFloatingActivity();
-            }
-        } else {
-            startFloatingActivity();
-        }
-    }
-
-    private void startFloatingActivity() {
-        String currentUrl = webView.getUrl(); // Get current URL from WebView
-        Intent intent = new Intent(this, FloatingActivity.class);
-        intent.putExtra("video_url", currentUrl); // Pass URL in Intent
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish(); // Close MainActivity
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
