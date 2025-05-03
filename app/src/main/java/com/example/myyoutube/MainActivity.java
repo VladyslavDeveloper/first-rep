@@ -33,10 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
-    static final String PREFS_NAME = "WebViewPrefs";
-    static final String PREF_URL = "url";
-    // In both MainActivity and FloatingActivity
-    public static final String PREF_SPEED = "playback_speed";
+     // In both MainActivity and FloatingActivity
+
     private SkipaAdd skipaAdd;
     private ShowSkipDialog showSkipDialog;
     private static final int ONE_MINUTE = 60;
@@ -51,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
     private Handler handler;
-    private boolean shouldCheckDuration = false;
+
     private boolean isLooping = false;
 
     private boolean isTimerRunning = true;
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
-    private float playbackSpeed = 1.0f;
+
     private final int speedUpdateInterval = 2000;
 
     private JoystickView joystickView;
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         setupJoystickControl();
 
         // Initialize the WebView and load last saved URL
-        initializeWebView();
+        SaveAndLoadLastVideo.initializeWebView(webView,this,this);
 
         setupButtonListeners();
         startSpeedUpdateTimer();
@@ -135,43 +133,8 @@ public class MainActivity extends AppCompatActivity {
         outState.putBoolean("isControlVisible", isControlVisible);
     }
 
-    public void initializeWebView() {
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
 
-        // Enable cookies
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptCookie(true);
-        cookieManager.setAcceptThirdPartyCookies(webView, true);
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                shouldCheckDuration = true;
-                startDurationCheck();
-                saveLastVideoUrl(url);
-                applyPlaybackSpeed(playbackSpeed);
-
-                JavaScript.makeSubtitleOf(webView);
-
-            }
-        });
-
-        // Load the last saved URL and playback speed
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String lastVideoUrl = preferences.getString(PREF_URL, "http://www.youtube.com");
-        playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
-        webView.loadUrl(lastVideoUrl);
-    }
-
-    private void saveLastVideoUrl(String url) {
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(PREF_URL, url);
-        editor.apply();
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
@@ -288,20 +251,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cyclePlaybackSpeed() {
-        switch ((int) playbackSpeed) {
+        switch ((int) SaveAndLoadLastVideo.playbackSpeed) {
             case 1:
-                playbackSpeed = 2.0f;
+                SaveAndLoadLastVideo.playbackSpeed = 2.0f;
                 break;
             case 2:
-                playbackSpeed = 3.0f;
+                SaveAndLoadLastVideo.playbackSpeed = 3.0f;
                 break;
             case 3:
-                playbackSpeed = 1.0f;
+                SaveAndLoadLastVideo.playbackSpeed = 1.0f;
                 break;
         }
-        btnSpeed.setText(playbackSpeed + "x Speed");
-        savePlaybackSpeed(playbackSpeed);
-        applyPlaybackSpeed(playbackSpeed);
+        btnSpeed.setText(SaveAndLoadLastVideo.playbackSpeed + "x Speed");
+        savePlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
+        applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
     }
 
     @Override
@@ -311,13 +274,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void savePlaybackSpeed(float speed) {
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(SaveAndLoadLastVideo.PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putFloat(PREF_SPEED, speed);
+        editor.putFloat(SaveAndLoadLastVideo.PREF_SPEED, speed);
         editor.apply();
     }
 
-    private void applyPlaybackSpeed(float speed) {
+    public void applyPlaybackSpeed(float speed) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
     }
 
@@ -329,24 +292,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (isTimerRunning) {
-                    applyPlaybackSpeed(playbackSpeed);
+                    applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed);
                     handler.postDelayed(this, speedUpdateInterval);
                 }
             }
         }, speedUpdateInterval);
     }
 
-    private void startDurationCheck() {
+    public void startDurationCheck() {
         if (handler == null) {
             handler = new Handler();
         }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (shouldCheckDuration) {
+                if (SaveAndLoadLastVideo.shouldCheckDuration) {
                     skipaAdd.skipVideo();
                     skipaAdd.checkVideoDuration();
-                    saveLastVideoUrl(webView.getUrl());
+                    SaveAndLoadLastVideo.saveLastVideoUrl(webView.getUrl(),MainActivity.this);
                     handler.postDelayed(this, 1000);
                 }
             }
