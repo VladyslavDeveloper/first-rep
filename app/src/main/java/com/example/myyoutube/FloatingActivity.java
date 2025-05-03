@@ -39,10 +39,7 @@ import java.util.ArrayList;
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;
     private WebView webView;
-    private LinearLayout sizeControlLayout;
-    private SeekBar sizeSeekBar;
-    private boolean isSizeControlVisible = false;
-    private Button btnDownload, speedBtn;
+   private Button btnDownload, speedBtn;
     private Button btnMove;
 
     private WindowManager windowManager;
@@ -59,14 +56,10 @@ public class FloatingActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "MyYouTubePrefs";
     private static final String PREF_URL = "LastVideoUrl";
     private static final String TAG = "FloatingActivity";
-    private static final int STATIC_WIDTH = 370; // Static width in dp
-    private static final float DEFAULT_HEIGHT_PERCENT = 0.5f; // 40% of screen height
 
     // Touch handling variables
     private float initialTouchX;
     private float initialTouchY;
-    private int initialWidth;
-    private int initialHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +70,8 @@ public class FloatingActivity extends AppCompatActivity {
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
 
         params = new WindowManager.LayoutParams(
-                (int) (STATIC_WIDTH * getResources().getDisplayMetrics().density),
-                (int) (screenHeight * DEFAULT_HEIGHT_PERCENT),
+                (int) (SizeFloatingActivity.STATIC_WIDTH * getResources().getDisplayMetrics().density),
+                (int) (screenHeight * SizeFloatingActivity.DEFAULT_HEIGHT_PERCENT),
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
@@ -96,8 +89,6 @@ public class FloatingActivity extends AppCompatActivity {
         // Initialize UI elements
         linearLayout1 = view.findViewById(R.id.linearLayout1);
         webView = view.findViewById(R.id.webView);
-        sizeControlLayout = view.findViewById(R.id.sizeControlLayout);
-        sizeSeekBar = view.findViewById(R.id.sizeSeekBar);
         btnDownload = view.findViewById(R.id.btnDownload);
         btnMove = view.findViewById(R.id.btnMove);
         speedBtn = view.findViewById(R.id.btnSpeed);
@@ -106,8 +97,6 @@ public class FloatingActivity extends AppCompatActivity {
         SaveAndLoadLastVideo.initializeWebView(webView,this);
 
 
-        // Setup size control
-        setupSizeControl();
 
         // Set button click listeners
         view.findViewById(R.id.btnClose).setOnClickListener(v -> {
@@ -155,6 +144,8 @@ public class FloatingActivity extends AppCompatActivity {
             }
         });
 
+        // Setup size control
+        SizeFloatingActivity.setupSizeControl(this,params,windowManager,linearLayout1);
         // Start duration check
         startDurationCheck();
     }
@@ -200,17 +191,7 @@ public class FloatingActivity extends AppCompatActivity {
         webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
     }
 
-    private void startVoiceSearch() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something to search on YouTube");
 
-        try {
-            startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Speech recognition is not supported on this device", Toast.LENGTH_SHORT).show();
-        }
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -220,26 +201,6 @@ public class FloatingActivity extends AppCompatActivity {
 
 
 
-    private void setupSizeControl() {
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-        sizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    float scale = Math.max(0.04f, progress / 100f);
-                    params.height = (int) (screenHeight * scale);
-                    windowManager.updateViewLayout(linearLayout1, params);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-    }
 
 
 
