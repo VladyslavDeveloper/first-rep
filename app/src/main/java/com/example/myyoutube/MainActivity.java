@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
 
-    SpeedPlayback speedPlayback;
-    private ShowSkipDialog showSkipDialog;
+    public static SpeedPlayback speedPlayback;
+
     private static final int ONE_MINUTE = 60;
     private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
 
-    private boolean isLooping = false;
+
 
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
 
@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         btnRecentVideos = findViewById(R.id.btnRecentVideos);
         speedPlayback = new SpeedPlayback();
 
-        showSkipDialog = new ShowSkipDialog(this, webView);
         voiceSearch = new VoiceSearch(this, webView);
 
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
@@ -112,116 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
-        btnSpeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpeedPlayback.cyclePlaybackSpeed(btnSpeed,webView, MainActivity.this);
-            }
-        });
-
-        Button btnToggleControls = findViewById(R.id.btnToggleControls);
-
-        // Initialize a flag to distinguish between move and click
-        final long[] downTime = new long[1];
-
-        btnToggleControls.setOnTouchListener(new View.OnTouchListener() {
-            private float dX, dY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Record the initial touch position relative to the button's position
-                        dX = v.getX() - event.getRawX();
-                        dY = v.getY() - event.getRawY();
-                        // Save the time when the touch event starts
-                        downTime[0] = System.currentTimeMillis();
-                        return true;
-
-                    case MotionEvent.ACTION_MOVE:
-                        // Move the button based on the current touch position
-                        v.animate()
-                                .x(event.getRawX() + dX)
-                                .y(event.getRawY() + dY)
-                                .setDuration(0)
-                                .start();
-                        return true;
-
-                    case MotionEvent.ACTION_UP:
-                        // If the button was pressed for too short a time (like a tap), trigger a click function
-                        if (System.currentTimeMillis() - downTime[0] < 200) { // 200ms threshold for tap
-                            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);  // Call your function
-                        }
-                        return true;
-
-                    default:
-                        return false;
-                }
-            }
-        });
-
-        btnToggleControls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle the click action here (if not already handled by touch listener)
-                PanelVisible.toggleControlsVisibility(controlsLayout, MainActivity.this);
-            }
-        });
-
-        btnSkip4sec.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSkipDialog.skipThreeMinutes();
-            }
-        });
-
-        Button btnOpenFloating = findViewById(R.id.btnOpenFloating);
-        btnOpenFloating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenFloatingActivity.checkOverlayPermission(MainActivity.this,MainActivity.this,webView);
-            }
-        });
-
-        btnSkip4sec.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showSkipDialog.showSkipTimeDialog();
-                return true;
-            }
-        });
-
-        btnLoop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isLooping = !isLooping;
-                webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
-                btnLoop.setText(isLooping ? "on" : "off");
-            }
-        });
-
-        btnTimer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SpeedPlayback.isTimerRunning = !SpeedPlayback.isTimerRunning;
-                if (SpeedPlayback.isTimerRunning) {
-                    speedPlayback.startSpeedUpdateTimer(webView);
-                    btnTimer.setText("on");
-                } else {
-                    if (TimerExecution.handler != null) {
-                        TimerExecution.handler.removeCallbacksAndMessages(null);
-                    }
-                    btnTimer.setText("off");
-                }
-            }
-        });
-
-        btnRotate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ControlOrientationHorizontal.toggleOrientation(MainActivity.this);
-            }
-        });
+      Buttons.makeButtons(this,controlsLayout,MainActivity.this,webView,btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate);
     }
 
 
