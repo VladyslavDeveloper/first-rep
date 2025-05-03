@@ -2,10 +2,13 @@ package com.example.myyoutube;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+
+import androidx.appcompat.app.AlertDialog;
 
 public class Buttons {
     private static ShowSkipDialog showSkipDialog;
@@ -121,6 +124,10 @@ public class Buttons {
                 }
             }
         });
+
+
+
+
         btnVoiceSearch.setOnClickListener(v -> VoiceSearch.startVoiceSearch(activity));
         btnRotate.setOnClickListener(new View.OnClickListener() {
             boolean isHorizontal = true; // по умолчанию включена

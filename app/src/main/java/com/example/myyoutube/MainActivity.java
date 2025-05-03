@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         Joystick.joystickView = findViewById(R.id.joystickView);
         Joystick.setupJoystickControl(webView);
 
