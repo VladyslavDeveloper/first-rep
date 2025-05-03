@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         controlsLayout = findViewById(R.id.controls);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         webView = findViewById(R.id.webview);
         btnSpeed = findViewById(R.id.btnSpeed);
         btnSkip4sec = findViewById(R.id.btnSkip3min);
@@ -386,15 +386,18 @@ public class MainActivity extends AppCompatActivity {
         }, 1000);
     }
 
+    private void visibleOf(){
+        controlsLayout.setVisibility(View.GONE);
+        joystickView.setVisibility(View.GONE);
+        // Set video container height to 0dp
+        FrameLayout videoContainer = findViewById(R.id.controls_scroll);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
+        params.height = 0; // Set height to 0dp
+        videoContainer.setLayoutParams(params);
+    }
     private void toggleControlsVisibility() {
         if (controlsLayout.getVisibility() == View.VISIBLE) {
-            controlsLayout.setVisibility(View.GONE);
-            joystickView.setVisibility(View.GONE);
-            // Set video container height to 0dp
-            FrameLayout videoContainer = findViewById(R.id.controls_scroll);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) videoContainer.getLayoutParams();
-            params.height = 0; // Set height to 0dp
-            videoContainer.setLayoutParams(params);
+            visibleOf();
         } else {
             controlsLayout.setVisibility(View.VISIBLE);
             joystickView.setVisibility(View.VISIBLE);
@@ -456,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                         "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
                         null
                     );
-                    joystickHandler.postDelayed(this, 100); // Update every 100ms
+                    joystickHandler.postDelayed(this, 200); // Update every 100ms
                 }
             }
         };
@@ -506,29 +509,12 @@ public class MainActivity extends AppCompatActivity {
     private void toggleOrientation() {
         isLandscape = !isLandscape;
         if (isLandscape) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            btnRotate.setText("📱"); // Phone icon for "return to portrait"
-            
-            // Make video fullscreen in landscape
-            webView.evaluateJavascript(
-                "var fullscreenButton = document.querySelector('.ytp-fullscreen-button');" +
-                "if(fullscreenButton && !document.fullscreenElement) {" +
-                "  fullscreenButton.click();" +
-                "}",
-                null
-            );
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+
+
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            btnRotate.setText("📱"); // Rotate icon for "switch to landscape"
-            
-            // Exit fullscreen in portrait
-            webView.evaluateJavascript(
-                "var fullscreenButton = document.querySelector('.ytp-fullscreen-button');" +
-                "if(fullscreenButton && document.fullscreenElement) {" +
-                "  fullscreenButton.click();" +
-                "}",
-                null
-            );
+
         }
     }
 
@@ -536,11 +522,57 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            isLandscape = true;
-            btnRotate.setText("📱");
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            isLandscape = false;
-            btnRotate.setText("📱");
+               getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+
+
+                    webView.evaluateJavascript(
+                            "(function() { " +
+                                    // Ваш первый скрипт
+                                    "var videos = document.querySelectorAll('video');" +
+                                    "for (var i = 0; i < document.body.children.length; i++) {" +
+                                    "var el = document.body.children[i];" +
+                                    "if (!el.querySelector('video')) { el.style.display = 'none'; }" +
+                                    "}" +
+                                    "document.documentElement.style.overflow = 'auto';" + // Разрешает прокрутку, если она необходима
+
+                            "document.body.style.margin = '0';" +
+                                    "document.body.style.padding = '0';" +
+
+
+                            "videos.forEach(function(video) {" +
+                                    "video.style.position = 'fixed';" +
+                                    "video.style.top = '20';" +
+                                    "video.style.left = '8';" +
+                                    "video.style.width = '80vw';" +
+                                    "video.style.height = '100vh';" +
+                                    "video.style.zIndex = '9999';" +
+                                    "video.style.objectFit = 'cover';" +
+                                    "});" +
+
+                                    // Ваш второй скрипт для скрытия верхней панели
+                                    "var topBar = document.querySelector('ytd-masthead');" +
+                                    "if (topBar) { " +  // Если панель найдена
+                                    "topBar.style.display = 'none';" +  // Скрываем панель
+                                    "}" +
+
+                                    "})();",
+                            null
+                    );
+
+                    // Выполнение JavaScript
+
+
+
+
+           visibleOf();
+        }  else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // Отмена всех стилей
+
+            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            String lastVideoUrl = preferences.getString(PREF_URL, "http://www.youtube.com");
+            playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
+            webView.loadUrl(lastVideoUrl);
+            toggleControlsVisibility();
         }
     }
 
