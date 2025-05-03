@@ -31,7 +31,7 @@ public class SaveAndLoadLastVideo {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 shouldCheckDuration = true;
-                mainActivity.startDurationCheck();
+                TimerExecution.startDurationCheck(webView,context);
                 SaveAndLoadLastVideo.saveLastVideoUrl(url,context);
                 mainActivity.applyPlaybackSpeed(playbackSpeed);
 

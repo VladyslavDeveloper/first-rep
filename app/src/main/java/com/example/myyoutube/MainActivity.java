@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
-    private SkipaAdd skipaAdd;
+
     SpeedPlayback speedPlayback;
     private ShowSkipDialog showSkipDialog;
     private static final int ONE_MINUTE = 60;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
-    private Handler handler;
+
     private boolean isLooping = false;
 
     private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         speedPlayback = new SpeedPlayback();
 
         showSkipDialog = new ShowSkipDialog(this, webView);
-        skipaAdd = new SkipaAdd(this, webView);
         voiceSearch = new VoiceSearch(this, webView);
 
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
@@ -211,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
                     speedPlayback.startSpeedUpdateTimer(MainActivity.this);
                     btnTimer.setText("on");
                 } else {
-                    if (handler != null) {
-                        handler.removeCallbacksAndMessages(null);
+                    if (TimerExecution.handler != null) {
+                        TimerExecution.handler.removeCallbacksAndMessages(null);
                     }
                     btnTimer.setText("off");
                 }
@@ -243,22 +242,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void startDurationCheck() {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (SaveAndLoadLastVideo.shouldCheckDuration) {
-                    skipaAdd.skipVideo();
-                    skipaAdd.checkVideoDuration();
-                    SaveAndLoadLastVideo.saveLastVideoUrl(webView.getUrl(), MainActivity.this);
-                    handler.postDelayed(this, 1000);
-                }
-            }
-        }, 1000);
-    }
 
     private void visibleOf() {
         controlsLayout.setVisibility(View.GONE);
