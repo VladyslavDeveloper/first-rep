@@ -122,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed(); // Exit the activity if there's no history
         }
     }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
