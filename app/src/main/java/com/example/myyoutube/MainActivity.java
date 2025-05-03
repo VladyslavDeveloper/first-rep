@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static SpeedPlayback speedPlayback;
 
-    private static final int THREE_MINUTES = 600;
+
     private LinearLayout controlsLayout;
     private WebView webView;
     private VoiceSearch voiceSearch;
