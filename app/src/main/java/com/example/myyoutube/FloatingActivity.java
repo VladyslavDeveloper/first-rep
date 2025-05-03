@@ -1,32 +1,58 @@
 package com.example.myyoutube;
 
 import android.annotation.SuppressLint;
+import android.os.PowerManager;
+
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.app.DownloadManager;
+import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Toast;
+import android.widget.Button;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class FloatingActivity extends AppCompatActivity {
+import android.graphics.Color;
 
+import java.util.ArrayList;
+
+public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;
     private WebView webView;
     private Button btnDownload, btnSkipTime, speedBtn, btnMove, btnLoop;
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
     private boolean isLooping = false;
-    private float initialTouchX, initialTouchY;
+    private Handler handler;
+
+
+    // Touch handling variables
+    private float initialTouchX;
+    private float initialTouchY;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -34,34 +60,6 @@ public class FloatingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize WindowManager and LayoutParams
-        initWindowManager();
-
-        // Inflate the floating layout
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.activity_floating, null);
-        windowManager.addView(view, params);
-
-        // Initialize UI elements
-        initUI(view);
-
-        // Setup WebView
-        SaveAndLoadLastVideo.initializeWebView(webView, this);
-
-        // Set button click listeners
-        setButtonListeners(view);
-
-        // Setup move button touch listener
-        setupMoveButton(view);
-
-        // Setup size control
-        SizeFloatingActivity.setupSizeControl(this, params, windowManager, linearLayout1);
-
-        // Start duration check
-        TimerExecution.startDurationCheck(webView, this);
-    }
-
-    // Initialize the WindowManager and LayoutParams
-    private void initWindowManager() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
 
@@ -75,10 +73,14 @@ public class FloatingActivity extends AppCompatActivity {
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 0;
         params.y = 100;
-    }
 
-    // Initialize UI elements
-    private void initUI(View view) {
+        // Inflate the floating layout
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.activity_floating, null);
+        windowManager.addView(view, params);
+
+
+        // Initialize UI elements
         linearLayout1 = view.findViewById(R.id.linearLayout1);
         webView = view.findViewById(R.id.webView);
         btnDownload = view.findViewById(R.id.btnDownload);
@@ -86,38 +88,29 @@ public class FloatingActivity extends AppCompatActivity {
         speedBtn = view.findViewById(R.id.btnSpeed);
         btnLoop = view.findViewById(R.id.btnLoop);
         btnSkipTime = view.findViewById(R.id.btnSkipTime);
-    }
 
-    // Set button click listeners
-    private void setButtonListeners(View view) {
-        // Close button
+        // Setup WebView
+        SaveAndLoadLastVideo.initializeWebView(webView, this);
+
+
+        // Set button click listeners
         view.findViewById(R.id.btnClose).setOnClickListener(v -> {
             windowManager.removeView(view);
+
             finish();
         });
-
-        // Skip Time button
         view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> ShowSkipDialog.skipThreeMinutes(webView));
-
-        // Speed button
         view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
-
-        // Loop button
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> {
             isLooping = !isLooping;
             webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
             btnLoop.setText(isLooping ? "on" : "off");
         });
 
-        // Voice Search button
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
-
-        // Download button
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this, webView));
-    }
 
-    // Setup move button touch listener
-    private void setupMoveButton(View view) {
+        // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible
 
         btnMove.setOnTouchListener(new View.OnTouchListener() {
@@ -150,6 +143,11 @@ public class FloatingActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // Setup size control
+        SizeFloatingActivity.setupSizeControl(this, params, windowManager, linearLayout1);
+        // Start duration check
+        TimerExecution.startDurationCheck(webView,this);
     }
 
     @Override
@@ -157,6 +155,7 @@ public class FloatingActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         // Reload video URL from new intent
+
     }
 
     @Override
@@ -165,11 +164,5 @@ public class FloatingActivity extends AppCompatActivity {
         VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (windowManager != null && linearLayout1 != null) {
-            windowManager.removeView(linearLayout1);
-        }
-    }
+
 }
