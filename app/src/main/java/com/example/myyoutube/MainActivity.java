@@ -4,42 +4,27 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
-
-    final float MAX_PLAYBACK_RATE = 3.0f;
     private Button btnVoiceSearch;
 
     public static SpeedPlayback speedPlayback;
 
-    private static final int ONE_MINUTE = 60;
-    private static final int TWO_MINUTES = 300;
     private static final int THREE_MINUTES = 600;
-    private static final int FIVE_MINUTES = 900;
-     private LinearLayout controlsLayout;
+    private LinearLayout controlsLayout;
     private WebView webView;
     private VoiceSearch voiceSearch;
     private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
     private Button btnRecentVideos;
 
 
-
-    private int skipTime = THREE_MINUTES; // Set skip time to 3 minutes in seconds
 
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
     @Override
@@ -96,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             PanelVisible.isControlVisible = savedInstanceState.getBoolean("isControlVisible");
 
             // Применяем состояние (например, показываем или скрываем элементы управления)
-            PanelVisible.toggleControlsVisibility(controlsLayout,MainActivity.this);
+            PanelVisible.toggleControlsVisibility(controlsLayout, MainActivity.this);
         }
     }
 
@@ -111,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
-      Buttons.makeButtons(this,controlsLayout,MainActivity.this,webView,btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate);
+        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate);
     }
-
 
 
     @Override
@@ -121,12 +105,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         voiceSearch.handleActivityResult(requestCode, resultCode, data);
     }
-
-
-
-
-
-
 
 
     @Override
@@ -155,11 +133,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        ControlOrientationHorizontal.changeOrientation(controlsLayout,webView,MainActivity.this,newConfig);
+        ControlOrientationHorizontal.changeOrientation(controlsLayout, webView, MainActivity.this, newConfig);
     }
 
 
