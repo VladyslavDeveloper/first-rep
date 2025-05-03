@@ -26,7 +26,7 @@ public class SpeedPlayback {
                 SaveAndLoadLastVideo.playbackSpeed = 1.0f;
                 break;
         }
-        btnSpeed.setText(SaveAndLoadLastVideo.playbackSpeed + "x Speed");
+        btnSpeed.setText(SaveAndLoadLastVideo.playbackSpeed + "");
         savePlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed, context);
         applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed, webView);
     }

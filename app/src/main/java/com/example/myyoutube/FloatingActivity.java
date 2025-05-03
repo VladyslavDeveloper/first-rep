@@ -1,4 +1,6 @@
 package com.example.myyoutube;
+
+import android.annotation.SuppressLint;
 import android.os.PowerManager;
 
 import android.content.ActivityNotFoundException;
@@ -30,8 +32,10 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.Button;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.graphics.Color;
 
 import java.util.ArrayList;
@@ -39,28 +43,18 @@ import java.util.ArrayList;
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;
     private WebView webView;
-   private Button btnDownload, speedBtn;
-    private Button btnMove;
-
+    private Button btnDownload, btnSkipTime, speedBtn, btnMove, btnLoop;
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
-    private float playbackSpeed = 1.0f; // Default playback speed
-
-     private int skipTime = 180; // Default skip time (3 minutes)
     private boolean isLooping = false;
     private Handler handler;
 
-    private static final int VOICE_SEARCH_REQUEST_CODE = 100;
-
-
-    private static final String PREFS_NAME = "MyYouTubePrefs";
-    private static final String PREF_URL = "LastVideoUrl";
-    private static final String TAG = "FloatingActivity";
 
     // Touch handling variables
     private float initialTouchX;
     private float initialTouchY;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,10 +86,11 @@ public class FloatingActivity extends AppCompatActivity {
         btnDownload = view.findViewById(R.id.btnDownload);
         btnMove = view.findViewById(R.id.btnMove);
         speedBtn = view.findViewById(R.id.btnSpeed);
+        btnLoop = view.findViewById(R.id.btnLoop);
+        btnSkipTime = view.findViewById(R.id.btnSkipTime);
 
         // Setup WebView
-        SaveAndLoadLastVideo.initializeWebView(webView,this);
-
+        SaveAndLoadLastVideo.initializeWebView(webView, this);
 
 
         // Set button click listeners
@@ -104,11 +99,16 @@ public class FloatingActivity extends AppCompatActivity {
 
             finish();
         });
-        view.findViewById(R.id.btnAction2).setOnClickListener(v -> skipThreeMinutes());
-        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn,webView,this));
-        view.findViewById(R.id.btnLoop).setOnClickListener(v -> toggleLooping());
+        view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> ShowSkipDialog.skipThreeMinutes(webView));
+        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
+        view.findViewById(R.id.btnLoop).setOnClickListener(v -> {
+            isLooping = !isLooping;
+            webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
+            btnLoop.setText(isLooping ? "on" : "off");
+        });
+
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
-        view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this,webView));
+        view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this, webView));
 
         // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible
@@ -145,9 +145,9 @@ public class FloatingActivity extends AppCompatActivity {
         });
 
         // Setup size control
-        SizeFloatingActivity.setupSizeControl(this,params,windowManager,linearLayout1);
+        SizeFloatingActivity.setupSizeControl(this, params, windowManager, linearLayout1);
         // Start duration check
-        startDurationCheck();
+        TimerExecution.startDurationCheck(webView,this);
     }
 
     @Override
@@ -158,54 +158,11 @@ public class FloatingActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
-    private void skipThreeMinutes() {
-        webView.evaluateJavascript("document.querySelector('video').currentTime += " + skipTime + ";", null);
-    }
-
-    private void startDurationCheck() {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SkipaAdd.checkAndSkipAdsF(webView);
-                SkipaAdd.skipVideoF(webView);
-                handler.postDelayed(this, 1000);
-            }
-        }, 1000);
-    }
-
-
-
-
-    private void toggleLooping() {
-        // Toggle the looping state
-        isLooping = !isLooping;
-
-        // Execute JavaScript to toggle the loop property of the video element
-        webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
-
-
-
-
-
-
-
-
-
 
 
 }

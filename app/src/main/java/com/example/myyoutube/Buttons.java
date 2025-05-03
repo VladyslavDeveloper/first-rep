@@ -72,7 +72,7 @@ public class Buttons {
         btnSkip4sec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSkipDialog.skipThreeMinutes();
+                showSkipDialog.skipThreeMinutes(webView);
             }
         });
 

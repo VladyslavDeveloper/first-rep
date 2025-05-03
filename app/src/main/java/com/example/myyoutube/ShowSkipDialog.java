@@ -44,7 +44,7 @@ public class ShowSkipDialog {
         });
         builder.show();
     }
-    public void skipThreeMinutes() {
+    public static void skipThreeMinutes(WebView webView) {
         webView.evaluateJavascript("document.querySelector('video').currentTime += 60;", null);
     }
 

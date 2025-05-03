@@ -65,7 +65,7 @@
                 android:padding="5dp"
                 android:gravity="center" />
             <Button
-                android:id="@+id/btnAction2"
+                android:id="@+id/btnSkipTime"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:text="⏭️"
