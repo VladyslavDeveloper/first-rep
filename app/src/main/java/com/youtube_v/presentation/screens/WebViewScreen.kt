@@ -63,9 +63,29 @@ fun WebViewScreen(
 
             item {
                 Button(onClick = {
-                    SpeedPlayback.applyPlaybackSpeed(4f, webViewRef)
+                    viewModel.setVideoSpeed(webViewRef!!)
                 }) {
-                    Text("play X4")
+                    Text("speed video")
+                }
+                Button(onClick = {
+                }) {
+                    Text("skip video")
+                }
+                Button(onClick = {
+                }) {
+                    Text("open window")
+                }
+                Button(onClick = {
+                }) {
+                    Text("cycle video")
+                }
+                Button(onClick = {
+                }) {
+                    Text("speak...")
+                }
+                Button(onClick = {
+                }) {
+                    Text("screen rotation")
                 }
             }
         }
