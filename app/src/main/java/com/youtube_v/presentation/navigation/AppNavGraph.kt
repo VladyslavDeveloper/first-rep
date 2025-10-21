@@ -21,11 +21,11 @@ fun AppNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = "menu"
+        startDestination = "webViewScreen"
     ) {
 
         // MainMenu Screen
-        composable("menu") {
+        composable("webViewScreen") {
             val viewModel: WebViewVM = viewModel()
 
             WebViewScreen(
