@@ -11,8 +11,6 @@ import com.example.myyoutube.R;
 
 public class Buttons {
 
-
-
     private static ShowSkipDialog showSkipDialog;
     private static boolean isLooping = false;
     public  static  void  makeButtons(Context context,View controlsLayout, Activity activity, WebView webView, Button btnSpeed, Button btnSkip4sec, Button btnLoop, Button btnTimer, Button btnRotate, Button btnVoiceSearch, Button btnRecentVideos){
