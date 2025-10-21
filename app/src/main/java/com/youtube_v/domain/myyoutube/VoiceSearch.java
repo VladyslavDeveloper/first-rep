@@ -1,4 +1,4 @@
-package com.youtube_v.myyoutube;
+package com.youtube_v.domain.myyoutube;
 
 import static android.app.Activity.RESULT_OK;
 

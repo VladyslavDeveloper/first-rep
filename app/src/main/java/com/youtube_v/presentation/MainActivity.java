@@ -1,15 +1,26 @@
-package com.youtube_v.myyoutube;
+package com.youtube_v.presentation;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.civ3.R;
+import com.youtube_v.domain.myyoutube.Buttons;
+import com.youtube_v.domain.myyoutube.ControlOrientationHorizontal;
+import com.youtube_v.domain.myyoutube.Joystick;
+import com.youtube_v.domain.myyoutube.PanelVisible;
+import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo;
+import com.youtube_v.domain.myyoutube.SpeedPlayback;
+import com.youtube_v.domain.myyoutube.VoiceSearch;
+
 public class MainActivity extends AppCompatActivity {
     private Button btnVoiceSearch;
 
@@ -18,9 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout controlsLayout;
     private WebView webView;
-    private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate;
+    private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate, btnSecActivity;
     private Button btnRecentVideos;
-
 
 
     @SuppressLint({"SetJavaScriptEnabled", "MissingInflatedId"})
@@ -41,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         speedPlayback = new SpeedPlayback();
 
 
+        btnSecActivity = findViewById(R.id.btnOpenSecondActivity);
 
 
         Joystick.joystickView = findViewById(R.id.joystickView);
@@ -51,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
         setupButtonListeners();
         speedPlayback.startSpeedUpdateTimer(webView);
+
+        btnSecActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -78,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
-        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate,btnVoiceSearch,btnRecentVideos);
+        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate, btnVoiceSearch, btnRecentVideos);
     }
 
 
@@ -87,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
-
 
 
     @Override
@@ -105,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed(); // Exit the activity if there's no history
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

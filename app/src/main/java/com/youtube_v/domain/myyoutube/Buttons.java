@@ -1,4 +1,4 @@
-package com.youtube_v.myyoutube;
+package com.youtube_v.domain.myyoutube;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 
 import com.civ3.R;
+import com.youtube_v.presentation.MainActivity;
 
 
 public class Buttons {

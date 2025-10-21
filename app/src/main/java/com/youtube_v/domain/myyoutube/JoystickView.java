@@ -1,4 +1,4 @@
-package com.youtube_v.myyoutube;
+package com.youtube_v.domain.myyoutube;
 
 import android.content.Context;
 import android.graphics.Canvas;
