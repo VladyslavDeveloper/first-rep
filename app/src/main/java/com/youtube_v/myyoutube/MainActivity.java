@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.myyoutube.R;
-
+import com.civ3.R;
 public class MainActivity extends AppCompatActivity {
     private Button btnVoiceSearch;
 

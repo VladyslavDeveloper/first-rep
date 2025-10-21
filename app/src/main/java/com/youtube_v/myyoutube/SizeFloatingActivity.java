@@ -6,8 +6,7 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-
-import com.example.myyoutube.R;
+import com.civ3.R;
 
 public class SizeFloatingActivity {
     private static LinearLayout sizeControlLayout;

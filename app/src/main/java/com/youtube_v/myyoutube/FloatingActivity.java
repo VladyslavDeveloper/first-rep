@@ -20,7 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 
-import com.example.myyoutube.R;
+import com.civ3.R;
+
 
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;

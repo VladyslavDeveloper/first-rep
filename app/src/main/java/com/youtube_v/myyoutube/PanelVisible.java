@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-
-import com.example.myyoutube.R;
+import com.civ3.R;
 
 public class PanelVisible {
     public static boolean isControlVisible = true;  // Инициализация переменной
