@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
+import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.myyoutube.SpeedPlayback
 import com.youtube_v.domain.myyoutube.TimerExecution
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
@@ -80,7 +81,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    OpenFloatingActivity.checkOverlayPermission(context, activity, webViewRef)
+                    viewModel.openFloatingWindow(context, activity, webViewRef!!)
                 }) {
                     Text("open window")
                 }
@@ -98,6 +99,10 @@ fun WebViewScreen(
                 Button(onClick = {
                 }) {
                     Text("screen rotation")
+                }
+                
+                Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
+                   Text(text = "subtitle of")
                 }
             }
         }

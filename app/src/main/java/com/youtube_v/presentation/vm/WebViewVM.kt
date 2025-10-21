@@ -1,8 +1,10 @@
 package com.youtube_v.presentation.vm
 
+import android.app.Activity
 import android.content.Context
 import android.webkit.WebView
 import androidx.lifecycle.ViewModel
+import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.domain.use_cases.ShowSkipDialog
 import com.youtube_v.domain.myyoutube.SpeedPlayback
@@ -21,7 +23,12 @@ class WebViewVM : ViewModel() {
         showSkipDialog.showSkipTimeDialog()
     }
 
-    fun openFloatingWindow(){
+    fun openFloatingWindow(context: Context, activity: Activity, webView: WebView){
+        OpenFloatingActivity.checkOverlayPermission(context, activity, webView)
 
+    }
+
+    fun subtitleMakeOf(webView: WebView){
+        JavaScript.makeSubtitleOf(webView)
     }
 }
