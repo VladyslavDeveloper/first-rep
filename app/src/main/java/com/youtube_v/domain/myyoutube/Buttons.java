@@ -56,9 +56,7 @@ public class Buttons {
         btnLoop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isLooping = !isLooping;
-                webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
-                btnLoop.setText(isLooping ? "on" : "off");
+
             }
         });
 

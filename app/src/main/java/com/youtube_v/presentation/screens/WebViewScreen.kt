@@ -5,27 +5,23 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.ViewModel
-import com.youtube_v.domain.myyoutube.JavaScript
-import com.youtube_v.domain.myyoutube.SpeedPlayback
-import com.youtube_v.domain.myyoutube.TimerExecution
-import com.youtube_v.domain.use_cases.OpenFloatingActivity
+import com.youtube_v.domain.myyoutube.Buttons
 import com.youtube_v.presentation.vm.WebViewVM
 
 @Composable
@@ -37,6 +33,8 @@ fun WebViewScreen(
     var webViewRef: WebView? = null
     val context = LocalContext.current
     val activity = LocalContext.current as Activity
+
+    var cycleVideo by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -87,8 +85,13 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
+                    cycleVideo = !cycleVideo
+                    webViewRef!!.evaluateJavascript(
+                        "document.querySelector('video').loop = " + cycleVideo + ";",
+                        null
+                    )
                 }) {
-                    Text("cycle video")
+                    Text("cycle video: ${if (cycleVideo) "on" else "of"}")
                 }
 
                 Button(onClick = {
@@ -100,9 +103,9 @@ fun WebViewScreen(
                 }) {
                     Text("screen rotation")
                 }
-                
+
                 Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
-                   Text(text = "subtitle of")
+                    Text(text = "subtitle of")
                 }
             }
         }
