@@ -3,6 +3,7 @@ package com.youtube_v.presentation.vm
 import android.app.Activity
 import android.content.Context
 import android.webkit.WebView
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
@@ -30,5 +31,15 @@ class WebViewVM : ViewModel() {
 
     fun subtitleMakeOf(webView: WebView){
         JavaScript.makeSubtitleOf(webView)
+    }
+
+    var cycleVideo = mutableStateOf(false)
+        private set
+    fun videoCycling(webView: WebView){
+        cycleVideo.value = !cycleVideo.value
+        webView.evaluateJavascript(
+            "document.querySelector('video').loop = " + cycleVideo + ";",
+            null
+        )
     }
 }

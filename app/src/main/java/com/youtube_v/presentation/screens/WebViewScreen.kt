@@ -34,7 +34,7 @@ fun WebViewScreen(
     val context = LocalContext.current
     val activity = LocalContext.current as Activity
 
-    var cycleVideo by remember { mutableStateOf(false) }
+    var cycleVideo by viewModel.cycleVideo
 
     Column(
         modifier = Modifier
@@ -85,11 +85,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    cycleVideo = !cycleVideo
-                    webViewRef!!.evaluateJavascript(
-                        "document.querySelector('video').loop = " + cycleVideo + ";",
-                        null
-                    )
+                    viewModel.videoCycling(webViewRef!!)
                 }) {
                     Text("cycle video: ${if (cycleVideo) "on" else "of"}")
                 }
