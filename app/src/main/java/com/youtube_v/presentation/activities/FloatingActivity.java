@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.presentation.activities;
 
 import android.annotation.SuppressLint;
 
@@ -21,6 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 
 import com.civ3.R;
+import com.youtube_v.domain.myyoutube.DownloadVideo;
+import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo;
+import com.youtube_v.domain.myyoutube.SizeFloatingActivity;
+import com.youtube_v.domain.myyoutube.SpeedPlayback;
+import com.youtube_v.domain.myyoutube.TimerExecution;
+import com.youtube_v.domain.myyoutube.VoiceSearch;
 import com.youtube_v.domain.use_cases.ShowSkipDialog;
 
 

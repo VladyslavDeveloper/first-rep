@@ -8,7 +8,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.webkit.WebView;
 
-import com.youtube_v.domain.myyoutube.FloatingActivity;
+import com.youtube_v.presentation.activities.FloatingActivity;
 
 public class OpenFloatingActivity {
     private static final int REQUEST_CODE = 101;

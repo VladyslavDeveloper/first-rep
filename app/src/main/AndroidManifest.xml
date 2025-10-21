@@ -20,10 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyYoutube">
         <activity
-            android:name="com.youtube_v.presentation.SecondActivity"
+            android:name="com.youtube_v.presentation.activities.SecondActivity"
             android:exported="false" />
         <activity
-            android:name="com.youtube_v.presentation.MainActivity"
+            android:name="com.youtube_v.presentation.activities.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:launchMode="singleTask">
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.youtube_v.domain.myyoutube.FloatingActivity"
+            android:name="com.youtube_v.presentation.activities.FloatingActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.Dialog" />

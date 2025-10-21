@@ -1,4 +1,4 @@
-package com.youtube_v.presentation
+package com.youtube_v.presentation.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
