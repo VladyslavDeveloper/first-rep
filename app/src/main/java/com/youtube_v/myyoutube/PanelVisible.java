@@ -1,10 +1,11 @@
-package com.example.myyoutube;
+package com.youtube_v.myyoutube;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+
+import com.example.myyoutube.R;
 
 public class PanelVisible {
     public static boolean isControlVisible = true;  // Инициализация переменной

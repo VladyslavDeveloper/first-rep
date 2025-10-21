@@ -1,44 +1,26 @@
-package com.example.myyoutube;
+package com.youtube_v.myyoutube;
 
 import android.annotation.SuppressLint;
-import android.os.PowerManager;
 
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PixelFormat;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.app.DownloadManager;
-import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.ValueCallback;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.Button;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 
-import java.util.ArrayList;
+import com.example.myyoutube.R;
 
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;

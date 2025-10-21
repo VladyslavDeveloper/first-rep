@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="com.youtube_v.myyoutube.MainActivity">
 
     <WebView
         android:id="@+id/webview"
@@ -150,7 +150,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.example.myyoutube.JoystickView
+    <com.youtube_v.myyoutube.JoystickView
         android:id="@+id/joystickView"
         android:layout_width="153dp"
         android:layout_height="53dp"

@@ -1,14 +1,13 @@
-package com.example.myyoutube;
+package com.youtube_v.myyoutube;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 
-import androidx.appcompat.app.AlertDialog;
+import com.example.myyoutube.R;
 
 public class Buttons {
     private static ShowSkipDialog showSkipDialog;

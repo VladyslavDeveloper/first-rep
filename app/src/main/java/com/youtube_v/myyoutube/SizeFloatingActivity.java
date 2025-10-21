@@ -1,4 +1,4 @@
-package com.example.myyoutube;
+package com.youtube_v.myyoutube;
 
 import android.app.Activity;
 import android.graphics.PixelFormat;
@@ -6,6 +6,8 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import com.example.myyoutube.R;
 
 public class SizeFloatingActivity {
     private static LinearLayout sizeControlLayout;
