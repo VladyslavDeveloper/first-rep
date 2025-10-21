@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.civ3.R;
 import com.youtube_v.domain.myyoutube.Buttons;
-import com.youtube_v.domain.myyoutube.Joystick;
 import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo;
 import com.youtube_v.domain.myyoutube.SpeedPlayback;
 import com.youtube_v.domain.myyoutube.VoiceSearch;
@@ -51,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnSecActivity = findViewById(R.id.btnOpenSecondActivity);
 
-
-        Joystick.joystickView = findViewById(R.id.joystickView);
-        Joystick.setupJoystickControl(webView);
 
         // Initialize the WebView and load last saved URL
         SaveAndLoadLastVideo.initializeWebView(webView, this);
@@ -109,14 +105,6 @@ public class MainActivity extends AppCompatActivity {
             webView.goBack(); // Go back to the previous page in WebView history
         } else {
             super.onBackPressed(); // Exit the activity if there's no history
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (Joystick.joystickHandler != null) {
-            Joystick.joystickHandler.removeCallbacks(Joystick.joystickRunnable);
         }
     }
 
