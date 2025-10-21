@@ -1,5 +1,6 @@
 package com.youtube_v.presentation.screens
 
+import android.app.Activity
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -17,11 +18,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
 import com.youtube_v.domain.myyoutube.SpeedPlayback
 import com.youtube_v.domain.myyoutube.TimerExecution
+import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.presentation.vm.WebViewVM
 
 @Composable
@@ -31,6 +34,8 @@ fun WebViewScreen(
 ) {
     val url = viewModel.url
     var webViewRef: WebView? = null
+    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     Column(
         modifier = Modifier
@@ -67,22 +72,29 @@ fun WebViewScreen(
                 }) {
                     Text("speed video")
                 }
+
                 Button(onClick = {
+                    viewModel.skipVideo(context, webViewRef!!)
                 }) {
                     Text("skip video")
                 }
+
                 Button(onClick = {
+                    OpenFloatingActivity.checkOverlayPermission(context, activity, webViewRef)
                 }) {
                     Text("open window")
                 }
+
                 Button(onClick = {
                 }) {
                     Text("cycle video")
                 }
+
                 Button(onClick = {
                 }) {
                     Text("speak...")
                 }
+
                 Button(onClick = {
                 }) {
                     Text("screen rotation")

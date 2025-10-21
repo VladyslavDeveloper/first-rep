@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 
 import com.civ3.R;
+import com.youtube_v.domain.use_cases.ShowSkipDialog;
 
 
 public class FloatingActivity extends AppCompatActivity {

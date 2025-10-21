@@ -14,9 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.civ3.R;
 import com.youtube_v.domain.myyoutube.Buttons;
-import com.youtube_v.domain.myyoutube.ControlOrientationHorizontal;
 import com.youtube_v.domain.myyoutube.Joystick;
-import com.youtube_v.domain.myyoutube.PanelVisible;
 import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo;
 import com.youtube_v.domain.myyoutube.SpeedPlayback;
 import com.youtube_v.domain.myyoutube.VoiceSearch;
@@ -76,22 +74,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Восстанавливаем данные
-            PanelVisible.isControlVisible = savedInstanceState.getBoolean("isControlVisible");
-
-            // Применяем состояние (например, показываем или скрываем элементы управления)
-            PanelVisible.toggleControlsVisibility(controlsLayout, MainActivity.this);
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // Сохраняем необходимые данные, например:
-        outState.putBoolean("isControlVisible", PanelVisible.isControlVisible);
     }
 
 
@@ -136,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        ControlOrientationHorizontal.changeOrientation(controlsLayout, webView, MainActivity.this, newConfig);
     }
-
 
 }
