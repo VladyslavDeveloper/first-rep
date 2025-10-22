@@ -9,33 +9,37 @@ import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.domain.use_cases.ShowSkipDialog
 import com.youtube_v.domain.myyoutube.SpeedPlayback
+import com.youtube_v.domain.myyoutube.VoiceSearch
 
-class WebViewVM : ViewModel() {
+class WebViewScreenVM : ViewModel() {
     val url = "https://www.youtube.com"
     lateinit var showSkipDialog: ShowSkipDialog
+    var speedPlaybackVideo = mutableStateOf(1f)
 
-    fun setVideoSpeed(webView: WebView){
-        SpeedPlayback.applyPlaybackSpeed(4f, webView)
+    fun setVideoSpeed(webView: WebView) {
+        speedPlaybackVideo.value = (speedPlaybackVideo.value % 4f) + 1f
+        SpeedPlayback.applyPlaybackSpeed(speedPlaybackVideo.value, webView)
     }
 
-    fun skipVideo (context: Context, webView: WebView){
+    fun skipVideo(context: Context, webView: WebView) {
         showSkipDialog =
             ShowSkipDialog(context, webView)
         showSkipDialog.showSkipTimeDialog()
     }
 
-    fun openFloatingWindow(context: Context, activity: Activity, webView: WebView){
+    fun openFloatingWindow(context: Context, activity: Activity, webView: WebView) {
         OpenFloatingActivity.checkOverlayPermission(context, activity, webView)
 
     }
 
-    fun subtitleMakeOf(webView: WebView){
+    fun subtitleMakeOf(webView: WebView) {
         JavaScript.makeSubtitleOf(webView)
     }
 
     var cycleVideo = mutableStateOf(false)
         private set
-    fun videoCycling(webView: WebView){
+
+    fun videoCycling(webView: WebView) {
         cycleVideo.value = !cycleVideo.value
         webView.evaluateJavascript(
             "document.querySelector('video').loop = " + cycleVideo + ";",

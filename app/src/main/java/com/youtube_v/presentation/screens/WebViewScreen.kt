@@ -9,24 +9,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.youtube_v.domain.myyoutube.Buttons
-import com.youtube_v.presentation.vm.WebViewVM
+import com.youtube_v.presentation.screens.utils.VoiceSearchButton
+import com.youtube_v.presentation.vm.WebViewScreenVM
 
 @Composable
 fun WebViewScreen(
-    viewModel: WebViewVM,
+    viewModel: WebViewScreenVM,
     onBack: () -> Unit
 ) {
     val url = viewModel.url
@@ -60,6 +59,7 @@ fun WebViewScreen(
         LazyRow(
             modifier = Modifier
                 .heightIn(27.dp)
+                .padding(0.dp, 0.dp, 0.dp, 16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -69,7 +69,7 @@ fun WebViewScreen(
                 Button(onClick = {
                     viewModel.setVideoSpeed(webViewRef!!)
                 }) {
-                    Text("speed video")
+                    Text("speed video: ${viewModel.speedPlaybackVideo.value}")
                 }
 
                 Button(onClick = {
@@ -90,15 +90,7 @@ fun WebViewScreen(
                     Text("cycle video: ${if (cycleVideo) "on" else "of"}")
                 }
 
-                Button(onClick = {
-                }) {
-                    Text("speak...")
-                }
-
-                Button(onClick = {
-                }) {
-                    Text("screen rotation")
-                }
+                VoiceSearchButton(webView = webViewRef!!)
 
                 Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
                     Text(text = "subtitle of")
