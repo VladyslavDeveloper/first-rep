@@ -19,14 +19,10 @@ import com.youtube_v.domain.myyoutube.SpeedPlayback;
 import com.youtube_v.domain.myyoutube.VoiceSearch;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btnVoiceSearch;
-
-    public static SpeedPlayback speedPlayback;
 
 
-    private LinearLayout controlsLayout;
     private WebView webView;
-    private Button btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate, btnSecActivity;
+    private Button btnSpeed, btnLoop, btnTimer, btnSecActivity;
     private Button btnRecentVideos;
 
 
@@ -35,27 +31,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        controlsLayout = findViewById(R.id.controls);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
         webView = findViewById(R.id.webview);
         btnSpeed = findViewById(R.id.btnSpeed);
-        btnSkip4sec = findViewById(R.id.btnSkip3min);
-        btnLoop = findViewById(R.id.btnLoop);
+         btnLoop = findViewById(R.id.btnLoop);
         btnTimer = findViewById(R.id.btnTimer);
-        btnRotate = findViewById(R.id.btnRotate);
-        btnRecentVideos = findViewById(R.id.btnRecentVideos);
-        btnVoiceSearch = findViewById(R.id.btnVoiceSearch);
-        speedPlayback = new SpeedPlayback();
-
+         btnRecentVideos = findViewById(R.id.btnRecentVideos);
 
         btnSecActivity = findViewById(R.id.btnOpenSecondActivity);
 
 
-        // Initialize the WebView and load last saved URL
-        SaveAndLoadLastVideo.initializeWebView(webView, this);
 
         setupButtonListeners();
-        speedPlayback.startSpeedUpdateTimer(webView);
 
         btnSecActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupButtonListeners() {
-        Buttons.makeButtons(this, controlsLayout, MainActivity.this, webView, btnSpeed, btnSkip4sec, btnLoop, btnTimer, btnRotate, btnVoiceSearch, btnRecentVideos);
+        Buttons.makeButtons(MainActivity.this, webView, btnSpeed, btnLoop, btnTimer, btnRecentVideos);
     }
 
 

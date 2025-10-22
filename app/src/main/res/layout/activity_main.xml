@@ -37,20 +37,7 @@
             android:layout_gravity="top|end" />
     </FrameLayout>
 
-    <Button
-        android:id="@+id/btnToggleControls"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="80dp"
-        android:backgroundTint="#1E780606"
-        android:gravity="center"
-        android:importantForAccessibility="yes"
-        android:padding="0dp"
-        android:text="👁️"
-        android:textColor="#2B0411"
-        android:textSize="25sp" />
+
 
     <!-- Horizontal ScrollView for buttons -->
     <HorizontalScrollView
@@ -67,44 +54,8 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <Button
-                android:id="@+id/btnSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="⏩"
-                android:textColor="#BBFD78" />
 
-            <Button
-                android:id="@+id/btnSkip3min"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="⏭️"
-                android:textColor="#BBFD78" />
 
-            <Button
-                android:id="@+id/btnLoop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="🔁"
-                android:textColor="#BBFD78" />
-
-            <Button
-                android:id="@+id/btnVoiceSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="🎤"
-                android:textColor="#BBFD78" />
             <Button
                 android:id="@+id/btnOpenSecondActivity"
                 android:layout_width="wrap_content"
@@ -115,15 +66,7 @@
                 android:text="open second act"
                 android:textColor="#BBFD78" />
 
-            <Button
-                android:id="@+id/btnOpenFloating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="🎧"
-                android:textColor="#BBFD78" />
+
             <Button
                 android:id="@+id/btnRecentVideos"
                 android:layout_width="wrap_content"
@@ -137,15 +80,6 @@
 
 
             <Button
-                android:id="@+id/btnRotate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
-                android:backgroundTint="#5F6060"
-                android:padding="5dp"
-                android:text="🔄"
-                android:textColor="#BBFD78" />
-            <Button
                 android:id="@+id/btnTimer"
                 android:layout_width="24dp"
                 android:layout_height="wrap_content"
@@ -158,13 +92,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.youtube_v.domain.myyoutube.JoystickView
-        android:id="@+id/joystickView"
-        android:layout_width="153dp"
-        android:layout_height="53dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="193dp"
-        android:layout_marginBottom="106dp" />
+
 
 </RelativeLayout>

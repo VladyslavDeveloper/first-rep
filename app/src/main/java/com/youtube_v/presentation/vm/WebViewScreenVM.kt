@@ -9,16 +9,29 @@ import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.domain.use_cases.ShowSkipDialog
 import com.youtube_v.domain.myyoutube.SpeedPlayback
-import com.youtube_v.domain.myyoutube.VoiceSearch
 
 class WebViewScreenVM : ViewModel() {
     val url = "https://www.youtube.com"
     lateinit var showSkipDialog: ShowSkipDialog
+
     var speedPlaybackVideo = mutableStateOf(1f)
 
-    fun setVideoSpeed(webView: WebView) {
-        speedPlaybackVideo.value = (speedPlaybackVideo.value % 4f) + 1f
-        SpeedPlayback.applyPlaybackSpeed(speedPlaybackVideo.value, webView)
+    fun initializePlaybackSpeed(context: Context){
+        val prefs = context.getSharedPreferences("WebViewPrefs", Context.MODE_PRIVATE)
+        var speed = prefs.getFloat("playback_speed", 1f)
+        speedPlaybackVideo.value = speed
+    }
+    fun setVideoSpeed(webView: WebView, context: Context) {
+        val prefs = context.getSharedPreferences("WebViewPrefs", Context.MODE_PRIVATE)
+        var speed = prefs.getFloat("playback_speed", 1f)
+
+        speed = if (speed >= 3f) 1f else speed + 1f
+        prefs.edit()
+            .putFloat("playback_speed", speed)
+            .apply()
+
+        speedPlaybackVideo.value = speed
+        SpeedPlayback.applyPlaybackSpeed(speed, webView)
     }
 
     fun skipVideo(context: Context, webView: WebView) {
