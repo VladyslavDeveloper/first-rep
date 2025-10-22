@@ -15,14 +15,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.youtube_v.domain.myyoutube.LookLastVideo
 import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo
-import com.youtube_v.domain.myyoutube.TimerExecution
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
 
@@ -99,6 +98,12 @@ fun WebViewScreen(
 
                 Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
                     Text(text = "subtitle of")
+                }
+
+                Button(onClick = {
+                    LookLastVideo.showSearchChannel(activity, webViewRef)
+                }) {
+                    Text(text = "look up chanel")
                 }
             }
         }

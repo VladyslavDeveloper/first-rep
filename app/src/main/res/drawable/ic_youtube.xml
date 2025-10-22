@@ -1,0 +1,18 @@
+<!-- res/drawable/ic_youtube.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Rounded red rectangle background (closer to official proportions) -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M21,6c0-1.66-1.34-3-3-3H6C4.34,3,3,4.34,3,6v12c0,1.66,1.34,3,3,3h12c1.66,0,3-1.34,3-3V6z" />
+
+    <!-- White play triangle, centered and sized to match typical icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10.2,8.5 L15.6,12 L10.2,15.5 z" />
+
+</vector>
