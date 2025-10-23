@@ -37,20 +37,6 @@ public class SpeedPlayback {
         editor.putFloat(SaveAndLoadLastVideo.PREF_SPEED, speed);
         editor.apply();
     }
-    public void startSpeedUpdateTimer(WebView webView) {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isTimerRunning) {
-                    applyPlaybackSpeed(SaveAndLoadLastVideo.playbackSpeed,webView);
-                    handler.postDelayed(this, speedUpdateInterval);
-                }
-            }
-        }, speedUpdateInterval);
-    }
 
     public static void applyPlaybackSpeed(float speed, WebView webView) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);

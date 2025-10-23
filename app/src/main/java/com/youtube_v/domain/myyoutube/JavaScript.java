@@ -104,42 +104,4 @@ public class JavaScript {
         );
         //make subtitle off on the video
     }
-
-
-    public static void makeJoystick(WebView webView, int numberMethods, float xPercent) {
-
-        final float REWIND_MULTIPLIER = 10.0f;
-        if (numberMethods == 1) {
-            webView.evaluateJavascript(
-                    "var video = document.querySelector('video');" +
-                            "if(video) { video.currentTime = video.currentTime + (window.joystickSeekValue || 0); }",
-                    null
-            );
-            // fast forward
-        } else if (numberMethods == 2) {
-            // X-axis controls seeking speed
-            float seekValue = xPercent * REWIND_MULTIPLIER;
-
-            webView.evaluateJavascript(
-                    "window.joystickSeekValue = " + seekValue + ";" +
-                            "var video = document.querySelector('video');" +
-                            "if(video) {" +
-                            "  video.playbackRate = " + (Math.abs(xPercent) < 0.1 ? "1.0" : "0.0") + ";" +
-                            "}",
-                    null
-            );
-            // rewind video
-
-        } else if (numberMethods == 3) {
-            webView.evaluateJavascript(
-                    "window.joystickSeekValue = 0;" +
-                            "var video = document.querySelector('video');" +
-                            "if(video) { video.playbackRate = 1.0; }",
-                    null
-            );
-            // stop joystick
-        }
-    }
-
-
 }

@@ -11,9 +11,6 @@ import com.civ3.R;
 public class SizeFloatingActivity {
     private static LinearLayout sizeControlLayout;
     private static SeekBar sizeSeekBar;
-    private boolean isSizeControlVisible = false;
-    private int initialWidth;
-    private int initialHeight;
     public static final int STATIC_WIDTH = 370; // Static width in dp
     public static final float DEFAULT_HEIGHT_PERCENT = 0.5f; // 40% of screen height
 
