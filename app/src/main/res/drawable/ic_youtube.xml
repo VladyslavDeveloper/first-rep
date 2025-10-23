@@ -12,7 +12,7 @@
 
     <!-- White play triangle, centered and sized to match typical icon -->
     <path
-        android:fillColor="#FFFFFF"
+        android:fillColor="#21632A"
         android:pathData="M10.2,8.5 L15.6,12 L10.2,15.5 z" />
 
 </vector>
