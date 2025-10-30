@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.youtube_v.domain.CostumeSearchChanelAndVideo
-import com.youtube_v.domain.SavingManager
 import com.youtube_v.domain.core.AppConstants
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
@@ -39,8 +38,6 @@ fun WebViewScreen(
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     val context = LocalContext.current
     val activity = LocalContext.current as Activity
-
-    viewModel.initializePlaybackSpeed()
 
     var cycleVideo by viewModel.cycleVideo
 
@@ -67,7 +64,7 @@ fun WebViewScreen(
                 }
             },
             update = { webView ->
-                SavingManager.initializeWebView(webView, context)
+                viewModel.initializeContent(webView, context)
             },
             modifier = Modifier
                 .weight(1f)
@@ -120,6 +117,4 @@ fun WebViewScreen(
             }
         }
     }
-
-
 }

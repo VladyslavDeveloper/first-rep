@@ -1,29 +1,27 @@
-package com.youtube_v.domain;
+package com.youtube_v.domain
 
-import android.content.Context;
-import android.os.Handler;
-import android.webkit.WebView;
+import android.content.Context
+import android.os.Handler
+import android.webkit.WebView
+import javax.inject.Inject
 
-import com.youtube_v.domain.SavingManager;
-import com.youtube_v.domain.SkipAd;
-
-public class TimerExecution {
-    public static Handler handler;
-    private static SkipAd skipAd;
-
-    public static void startDurationCheck(WebView webView, Context context) {
+class TimerExecution @Inject constructor(
+    val savingManager: SavingManager
+) {
+    var handler: Handler? = null
+    private var skipAd: SkipAd? = null
+    fun startDurationCheck(webView: WebView, context: Context?) {
         if (handler == null) {
-            handler = new Handler();
+            handler = Handler()
         }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                skipAd = new SkipAd(webView);
-                skipAd.checkIfVideoExists();
-                SavingManager.saveLastVideoUrl(webView.getUrl(), context);
-                SavingManager.loadPlayBackSpeed(context, webView);
-                handler.postDelayed(this, 1000);
+        handler!!.postDelayed(object : Runnable {
+            override fun run() {
+                skipAd = SkipAd(webView)
+                skipAd!!.checkIfVideoExists()
+                savingManager.saveLastVideoUrl(webView.getUrl(), context!!)
+                savingManager.loadPlayBackSpeed(context!!, webView)
+                handler!!.postDelayed(this, 1000)
             }
-        }, 1000);
+        }, 1000)
     }
 }

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.civ3.R;
 import com.youtube_v.domain.DownloaderVideo;
@@ -24,8 +25,11 @@ import com.youtube_v.domain.SavingManager;
 import com.youtube_v.domain.SizeFloatingActivity;
 import com.youtube_v.domain.VoiceSearch;
 import com.youtube_v.domain.SkipVideoTime;
+import com.youtube_v.presentation.vm.FloatingScreenVM;
 
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class FloatingActivity extends AppCompatActivity {
     private LinearLayout linearLayout1;
     private WebView webView;
@@ -44,6 +48,7 @@ public class FloatingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FloatingScreenVM viewModel = new ViewModelProvider(this).get(FloatingScreenVM.class);
 
         // Initialize WindowManager and LayoutParams
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
@@ -75,8 +80,7 @@ public class FloatingActivity extends AppCompatActivity {
         btnLoop = view.findViewById(R.id.btnLoop);
         btnSkipTime = view.findViewById(R.id.btnSkipTime);
 
-        // Setup WebView
-        SavingManager.initializeWebView(webView, this);
+        viewModel.initializeContent(webView, this);
 
 
         // Set button click listeners
@@ -85,15 +89,15 @@ public class FloatingActivity extends AppCompatActivity {
 
             finish();
         });
-        view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> SkipVideoTime.skipThreeMinutes(webView));
-       // view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
+        view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> viewModel.skipVideoTime(webView));
+        // view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> {
             isLooping = !isLooping;
             webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
             btnLoop.setText(isLooping ? "on" : "off");
         });
 
-        view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
+        //view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloaderVideo.downloadCurrentVideo(this, webView));
 
         // Setup move button touch listener
@@ -133,7 +137,7 @@ public class FloatingActivity extends AppCompatActivity {
         // Setup size control
         SizeFloatingActivity.setupSizeControl(this, params, windowManager, linearLayout1);
         // Start duration check
-      //  TimerExecution.startDurationCheck(webView,this);
+        //  TimerExecution.startDurationCheck(webView,this);
     }
 
     @Override
@@ -147,8 +151,5 @@ public class FloatingActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        VoiceSearch.handleResult(requestCode, resultCode, data, this, webView);
     }
-
-
 }
