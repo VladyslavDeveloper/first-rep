@@ -2,7 +2,6 @@ package com.youtube_v.domain.myyoutube;
 
 import static android.content.ContentValues.TAG;
 
-import android.content.Context;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;

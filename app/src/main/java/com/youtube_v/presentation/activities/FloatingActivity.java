@@ -1,9 +1,9 @@
 package com.youtube_v.presentation.activities;
 
 import android.annotation.SuppressLint;
-
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,19 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
-
 import com.civ3.R;
 import com.youtube_v.domain.myyoutube.DownloadVideo;
-import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo;
+import com.youtube_v.domain.myyoutube.SavingManager;
 import com.youtube_v.domain.myyoutube.SizeFloatingActivity;
-import com.youtube_v.domain.myyoutube.SpeedPlayback;
-import com.youtube_v.domain.myyoutube.TimerExecution;
 import com.youtube_v.domain.myyoutube.VoiceSearch;
 import com.youtube_v.domain.use_cases.ShowSkipDialog;
 
@@ -80,7 +76,7 @@ public class FloatingActivity extends AppCompatActivity {
         btnSkipTime = view.findViewById(R.id.btnSkipTime);
 
         // Setup WebView
-        SaveAndLoadLastVideo.initializeWebView(webView, this);
+        SavingManager.initializeWebView(webView, this);
 
 
         // Set button click listeners
@@ -137,7 +133,7 @@ public class FloatingActivity extends AppCompatActivity {
         // Setup size control
         SizeFloatingActivity.setupSizeControl(this, params, windowManager, linearLayout1);
         // Start duration check
-        TimerExecution.startDurationCheck(webView,this);
+      //  TimerExecution.startDurationCheck(webView,this);
     }
 
     @Override

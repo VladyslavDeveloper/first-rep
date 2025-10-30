@@ -9,12 +9,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class SaveAndLoadLastVideo {
-    public static final String PREF_SPEED = "playback_speed";
-    static final String PREFS_NAME = "WebViewPrefs";
-    static final String PREF_URL = "url";
-    public static boolean shouldCheckDuration = false;
-    public static float playbackSpeed = 1.0f;
+import com.youtube_v.domain.myyoutube.core.AppConstants;
+
+public class SavingManager {
 
     public static void initializeWebView(WebView webView,Context context) {
         WebSettings webSettings = webView.getSettings();
@@ -30,27 +27,31 @@ public class SaveAndLoadLastVideo {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                shouldCheckDuration = true;
                 TimerExecution.startDurationCheck(webView,context);
-                SaveAndLoadLastVideo.saveLastVideoUrl(url,context);
-                SpeedPlayback.applyPlaybackSpeed(playbackSpeed, webView);
-
+                SpeedPlayback.applyPlaybackSpeed(1f, webView);
                 JavaScript.makeSubtitleOf(webView);
 
             }
         });
-
-        // Load the last saved URL and playback speed
-        SharedPreferences preferences = context.getSharedPreferences(SaveAndLoadLastVideo.PREFS_NAME, MODE_PRIVATE);
-        String lastVideoUrl = preferences.getString(SaveAndLoadLastVideo.PREF_URL, "http://www.youtube.com");
-        playbackSpeed = preferences.getFloat(PREF_SPEED, 1.0f);
-        webView.loadUrl(lastVideoUrl);
+       loadSavedURL(context, webView);
     }
 
+    private static void loadSavedURL(Context context, WebView webView){
+        // Load the last saved URL
+        SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
+        String lastVideoUrl = preferences.getString(AppConstants.PREF_URL, AppConstants.BASE_URL);
+        webView.loadUrl(lastVideoUrl);
+    }
+    public static void loadPlayBackSpeed(Context context, WebView webView){
+        // Load the last playback speed
+        SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
+        float playbackSpeed = preferences.getFloat(AppConstants.PREF_SPEED, 1.0f);
+        SpeedPlayback.applyPlaybackSpeed(playbackSpeed, webView);
+    }
     public static void saveLastVideoUrl(String url, Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(PREF_URL, url);
+        editor.putString(AppConstants.PREF_URL, url);
         editor.apply();
     }
 }

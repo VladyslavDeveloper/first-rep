@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.youtube_v.domain.myyoutube.LookLastVideo
-import com.youtube_v.domain.myyoutube.SaveAndLoadLastVideo
+import com.youtube_v.domain.myyoutube.SavingManager
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
 
@@ -66,7 +66,7 @@ fun WebViewScreen(
                 }
             },
             update = { webView ->
-                SaveAndLoadLastVideo.initializeWebView(webView, context)
+                SavingManager.initializeWebView(webView, context)
             },
             modifier = Modifier
                 .weight(1f)

@@ -6,7 +6,8 @@ import android.webkit.WebView;
 
 public class TimerExecution {
     public static Handler handler;
-    private static SkipAdd skipaAdd;
+    private static SkipAdd skipAdd;
+
     public static void startDurationCheck(WebView webView, Context context) {
         if (handler == null) {
             handler = new Handler();
@@ -14,13 +15,12 @@ public class TimerExecution {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (SaveAndLoadLastVideo.shouldCheckDuration) {
-                    skipaAdd = new SkipAdd(webView);
-                    skipaAdd.skipVideo();
-                    skipaAdd.checkVideoDuration();
-                    SaveAndLoadLastVideo.saveLastVideoUrl(webView.getUrl(), context);
-                    handler.postDelayed(this, 1000);
-                }
+                skipAdd = new SkipAdd(webView);
+                skipAdd.skipVideo();
+                skipAdd.checkVideoDuration();
+                SavingManager.saveLastVideoUrl(webView.getUrl(), context);
+                SavingManager.loadPlayBackSpeed(context, webView);
+                handler.postDelayed(this, 1000);
             }
         }, 1000);
     }
