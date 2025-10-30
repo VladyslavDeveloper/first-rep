@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.youtube_v.domain.myyoutube.LookLastVideo
 import com.youtube_v.domain.myyoutube.SavingManager
+import com.youtube_v.domain.myyoutube.core.AppConstants
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
 
@@ -33,7 +34,7 @@ fun WebViewScreen(
     viewModel: WebViewScreenVM,
     onBack: () -> Unit
 ) {
-    val url = viewModel.url
+
     // ✅ Keep WebView reference across recompositions
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     val context = LocalContext.current
@@ -61,7 +62,7 @@ fun WebViewScreen(
                     settings.javaScriptEnabled = true
                     webViewClient = WebViewClient()
                     webChromeClient = WebChromeClient()
-                    loadUrl(url)
+                    loadUrl(AppConstants.BASE_URL)
 
                 }
             },

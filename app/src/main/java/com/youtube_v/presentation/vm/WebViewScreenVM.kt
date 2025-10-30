@@ -7,9 +7,11 @@ import android.webkit.WebView
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.youtube_v.domain.myyoutube.JavaScript
+import com.youtube_v.domain.myyoutube.SavingManager
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.domain.use_cases.ShowSkipDialog
 import com.youtube_v.domain.myyoutube.SpeedPlayback
+import com.youtube_v.domain.myyoutube.core.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,24 +19,20 @@ import javax.inject.Inject
 class WebViewScreenVM @Inject constructor(
     val prefs: SharedPreferences
 ) : ViewModel() {
-    val url = "https://www.youtube.com"
     lateinit var showSkipDialog: ShowSkipDialog
 
     var speedPlaybackVideo = mutableStateOf(1f)
 
     fun initializePlaybackSpeed() {
-        var speed = prefs.getFloat("playback_speed", 1f)
+        var speed = prefs.getFloat(AppConstants.PREF_SPEED, 1f)
         speedPlaybackVideo.value = speed
     }
 
     fun setVideoSpeed(webView: WebView) {
-        var speed = prefs.getFloat("playback_speed", 1f)
+        var speed = prefs.getFloat(AppConstants.PREF_SPEED, 1f)
 
         speed = if (speed >= 3f) 1f else speed + 1f
-        prefs.edit()
-            .putFloat("playback_speed", speed)
-            .apply()
-
+        SavingManager.savePlayBackSpeed(prefs, speed)
         speedPlaybackVideo.value = speed
         SpeedPlayback.applyPlaybackSpeed(speed, webView)
     }

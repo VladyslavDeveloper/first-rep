@@ -36,22 +36,29 @@ public class SavingManager {
        loadSavedURL(context, webView);
     }
 
+    public static void saveLastVideoUrl(String url, Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(AppConstants.PREF_URL, url);
+        editor.apply();
+    }
     private static void loadSavedURL(Context context, WebView webView){
         // Load the last saved URL
         SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
         String lastVideoUrl = preferences.getString(AppConstants.PREF_URL, AppConstants.BASE_URL);
         webView.loadUrl(lastVideoUrl);
     }
+
+    public static void savePlayBackSpeed(SharedPreferences prefs, float speed){
+        prefs.edit()
+                .putFloat(AppConstants.PREF_SPEED, speed)
+                .apply();
+
+    }
     public static void loadPlayBackSpeed(Context context, WebView webView){
         // Load the last playback speed
         SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
         float playbackSpeed = preferences.getFloat(AppConstants.PREF_SPEED, 1.0f);
         SpeedPlayback.applyPlaybackSpeed(playbackSpeed, webView);
-    }
-    public static void saveLastVideoUrl(String url, Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(AppConstants.PREF_URL, url);
-        editor.apply();
     }
 }
