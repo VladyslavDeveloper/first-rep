@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.civ3.R;
-import com.youtube_v.domain.DownloadVideo;
+import com.youtube_v.domain.DownloaderVideo;
 import com.youtube_v.domain.SavingManager;
 import com.youtube_v.domain.SizeFloatingActivity;
 import com.youtube_v.domain.VoiceSearch;
@@ -94,7 +94,7 @@ public class FloatingActivity extends AppCompatActivity {
         });
 
         view.findViewById(R.id.btnVoiceSearch1).setOnClickListener(v -> VoiceSearch.startVoiceSearch(this));
-        view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloadVideo.downloadCurrentVideo(this, webView));
+        view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloaderVideo.downloadCurrentVideo(this, webView));
 
         // Setup move button touch listener
         btnMove.setVisibility(View.VISIBLE); // Make move button visible

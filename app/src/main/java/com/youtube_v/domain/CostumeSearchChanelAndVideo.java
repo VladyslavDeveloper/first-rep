@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class CostumeSearchChanelAndVideo {
 
-    public static void showSearchChannel(Context context, WebView webView) {
+    public static void showSearchDialog(Context context, WebView webView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Search youtube channel or RecentVideos");
 

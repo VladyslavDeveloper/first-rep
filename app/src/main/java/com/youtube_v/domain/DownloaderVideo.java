@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-public class DownloadVideo {
+public class DownloaderVideo {
 
     public static void loadVideoInPlayer(String videoUrl, WebView webView) {
         if (videoUrl != null && !videoUrl.isEmpty()) {
@@ -46,7 +46,7 @@ public class DownloadVideo {
         String currentUrl = activity.getIntent().getStringExtra("video_url");
 
         if (currentUrl != null && currentUrl.contains("googlevideo.com/videoplayback")) {
-            DownloadVideo.loadVideoInPlayer(currentUrl,webView);
+            DownloaderVideo.loadVideoInPlayer(currentUrl,webView);
             Toast.makeText(activity, "Loading video...", Toast.LENGTH_SHORT).show();
         } else {
             try {

@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
 import com.civ3.R;
 
 public class SizeFloatingActivity {
@@ -13,7 +14,6 @@ public class SizeFloatingActivity {
     private static SeekBar sizeSeekBar;
     public static final int STATIC_WIDTH = 370; // Static width in dp
     public static final float DEFAULT_HEIGHT_PERCENT = 0.5f; // 40% of screen height
-
 
 
     public static void setupSizeControl(Activity activity, WindowManager.LayoutParams params, WindowManager windowManager, LinearLayout linearLayout1) {
@@ -33,12 +33,12 @@ public class SizeFloatingActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
-
-
 }

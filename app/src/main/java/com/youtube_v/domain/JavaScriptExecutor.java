@@ -1,26 +1,23 @@
 package com.youtube_v.domain;
 
 
-
 import android.webkit.WebView;
 
 public class JavaScriptExecutor {
+    ///////////////
     public static void applyPlaybackSpeed(float speed, WebView webView) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = " + speed + ";", null);
     }
-    
-    
-    
-    public static void cyclingVideo(WebView webView, boolean cycleVideo){
+
+    ///////////////
+    public static void cyclingVideo(WebView webView, boolean cycleVideo) {
         webView.evaluateJavascript(
                 "document.querySelector('video').loop = " + cycleVideo + ";",
                 null
         );
     }
-    
 
-
-
+    //////////////
     public static void videoFullScreen(WebView webView) {
         webView.evaluateJavascript(
                 "(function() { " +
@@ -56,8 +53,8 @@ public class JavaScriptExecutor {
                 null
                 // this method make current video on the full screen(delete all except video container)
         );
-
     }
+
     public static void videoFullScreenCancel(WebView webView) {
         webView.evaluateJavascript(
                 "(function() {" +
@@ -79,11 +76,7 @@ public class JavaScriptExecutor {
         // Cancel full screen mode
     }
 
-
-
-
-
-
+    /////////////
     public static void makeSubtitleOf(WebView webView) {
         webView.evaluateJavascript(
                 "function disableSubtitles() {" +

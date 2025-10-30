@@ -113,7 +113,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    CostumeSearchChanelAndVideo.showSearchChannel(activity, webViewRef)
+                    CostumeSearchChanelAndVideo.showSearchDialog(activity, webViewRef)
                 }) {
                     Text(text = "look up chanel")
                 }
