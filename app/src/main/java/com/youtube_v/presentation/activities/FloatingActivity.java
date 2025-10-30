@@ -90,7 +90,7 @@ public class FloatingActivity extends AppCompatActivity {
             finish();
         });
         view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> ShowSkipDialog.skipThreeMinutes(webView));
-        view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
+       // view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> {
             isLooping = !isLooping;
             webView.evaluateJavascript("document.querySelector('video').loop = " + isLooping + ";", null);
