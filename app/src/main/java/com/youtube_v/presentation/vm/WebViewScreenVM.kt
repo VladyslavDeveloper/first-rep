@@ -6,12 +6,11 @@ import android.content.SharedPreferences
 import android.webkit.WebView
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.youtube_v.domain.myyoutube.JavaScript
-import com.youtube_v.domain.myyoutube.SavingManager
-import com.youtube_v.domain.use_cases.OpenFloatingActivity
-import com.youtube_v.domain.use_cases.ShowSkipDialog
-import com.youtube_v.domain.myyoutube.SpeedPlayback
-import com.youtube_v.domain.myyoutube.core.AppConstants
+import com.youtube_v.domain.JavaScriptExecutor
+import com.youtube_v.domain.SavingManager
+import com.youtube_v.domain.OpenFloatingActivity
+import com.youtube_v.domain.SkipVideoTime
+import com.youtube_v.domain.core.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class WebViewScreenVM @Inject constructor(
     val prefs: SharedPreferences
 ) : ViewModel() {
-    lateinit var showSkipDialog: ShowSkipDialog
+    lateinit var skipVideoTime: SkipVideoTime
 
     var speedPlaybackVideo = mutableStateOf(1f)
 
@@ -34,13 +33,13 @@ class WebViewScreenVM @Inject constructor(
         speed = if (speed >= 3f) 1f else speed + 1f
         SavingManager.savePlayBackSpeed(prefs, speed)
         speedPlaybackVideo.value = speed
-        SpeedPlayback.applyPlaybackSpeed(speed, webView)
+        JavaScriptExecutor.applyPlaybackSpeed(speed, webView)
     }
 
     fun skipVideo(context: Context, webView: WebView) {
-        showSkipDialog =
-            ShowSkipDialog(context, webView)
-        showSkipDialog.showSkipTimeDialog()
+        skipVideoTime =
+            SkipVideoTime(context, webView)
+        skipVideoTime.showSkipTimeDialog()
     }
 
     fun openFloatingWindow(context: Context, activity: Activity, webView: WebView) {
@@ -49,7 +48,7 @@ class WebViewScreenVM @Inject constructor(
     }
 
     fun subtitleMakeOf(webView: WebView) {
-        JavaScript.makeSubtitleOf(webView)
+        JavaScriptExecutor.makeSubtitleOf(webView)
     }
 
     var cycleVideo = mutableStateOf(false)
@@ -57,9 +56,6 @@ class WebViewScreenVM @Inject constructor(
 
     fun videoCycling(webView: WebView) {
         cycleVideo.value = !cycleVideo.value
-        webView.evaluateJavascript(
-            "document.querySelector('video').loop = " + cycleVideo + ";",
-            null
-        )
+        JavaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
     }
 }

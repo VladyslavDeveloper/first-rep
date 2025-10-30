@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -9,13 +9,13 @@ import android.speech.RecognizerIntent;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.youtube_v.domain.core.AppConstants;
+
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 public class VoiceSearch {
-    public static final int VOICE_SEARCH_REQUEST_CODE = 1000;
-
     // Старт голосового ввода
     public static void startVoiceSearch(Activity activity) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -23,7 +23,7 @@ public class VoiceSearch {
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something to search on YouTube");
 
         try {
-            activity.startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE);
+            activity.startActivityForResult(intent, AppConstants.VOICE_SEARCH_REQUEST_CODE);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, "Voice search not supported on this device", Toast.LENGTH_SHORT).show();
         }
@@ -31,7 +31,7 @@ public class VoiceSearch {
 
     // Обработка результата
     public static void handleResult(int requestCode, int resultCode, Intent data, Activity activity, WebView webView) {
-        if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == AppConstants.VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
                 openYouTubeSearch(results.get(0), webView);

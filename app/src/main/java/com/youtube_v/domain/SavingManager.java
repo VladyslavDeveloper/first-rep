@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -9,7 +9,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.youtube_v.domain.myyoutube.core.AppConstants;
+import com.youtube_v.domain.core.AppConstants;
 
 public class SavingManager {
 
@@ -28,8 +28,9 @@ public class SavingManager {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 TimerExecution.startDurationCheck(webView,context);
-                SpeedPlayback.applyPlaybackSpeed(1f, webView);
-                JavaScript.makeSubtitleOf(webView);
+                JavaScriptExecutor.applyPlaybackSpeed(1f, webView);
+                JavaScriptExecutor.makeSubtitleOf(webView);
+
 
             }
         });
@@ -59,6 +60,6 @@ public class SavingManager {
         // Load the last playback speed
         SharedPreferences preferences = context.getSharedPreferences(AppConstants.PREFS_NAME, MODE_PRIVATE);
         float playbackSpeed = preferences.getFloat(AppConstants.PREF_SPEED, 1.0f);
-        SpeedPlayback.applyPlaybackSpeed(playbackSpeed, webView);
+        JavaScriptExecutor.applyPlaybackSpeed(playbackSpeed, webView);
     }
 }

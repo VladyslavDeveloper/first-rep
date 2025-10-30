@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import android.app.Activity;
 import android.content.Intent;

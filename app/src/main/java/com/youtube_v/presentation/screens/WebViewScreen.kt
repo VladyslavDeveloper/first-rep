@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.youtube_v.domain.myyoutube.LookLastVideo
-import com.youtube_v.domain.myyoutube.SavingManager
-import com.youtube_v.domain.myyoutube.core.AppConstants
+import com.youtube_v.domain.CostumeSearchChanelAndVideo
+import com.youtube_v.domain.SavingManager
+import com.youtube_v.domain.core.AppConstants
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
 
@@ -113,7 +113,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    LookLastVideo.showSearchChannel(activity, webViewRef)
+                    CostumeSearchChanelAndVideo.showSearchChannel(activity, webViewRef)
                 }) {
                     Text(text = "look up chanel")
                 }

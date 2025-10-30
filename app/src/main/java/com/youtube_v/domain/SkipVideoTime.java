@@ -1,4 +1,4 @@
-package com.youtube_v.domain.use_cases;
+package com.youtube_v.domain;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -6,12 +6,12 @@ import android.webkit.WebView;
 
 import androidx.appcompat.app.AlertDialog;
 
-public class ShowSkipDialog {
+public class SkipVideoTime {
     private Context context;
     private WebView webView;
 
     // Constructor to receive context and WebView
-    public ShowSkipDialog(Context context, WebView webView) {
+    public SkipVideoTime(Context context, WebView webView) {
         this.context = context;
         this.webView = webView;
     }
@@ -44,8 +44,8 @@ public class ShowSkipDialog {
         });
         builder.show();
     }
+
     public static void skipThreeMinutes(WebView webView) {
         webView.evaluateJavascript("document.querySelector('video').currentTime += 60;", null);
     }
-
 }

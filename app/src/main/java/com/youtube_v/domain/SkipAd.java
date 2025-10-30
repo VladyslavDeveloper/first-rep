@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import static android.content.ContentValues.TAG;
 

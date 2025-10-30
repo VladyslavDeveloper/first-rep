@@ -19,11 +19,11 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.civ3.R;
-import com.youtube_v.domain.myyoutube.DownloadVideo;
-import com.youtube_v.domain.myyoutube.SavingManager;
-import com.youtube_v.domain.myyoutube.SizeFloatingActivity;
-import com.youtube_v.domain.myyoutube.VoiceSearch;
-import com.youtube_v.domain.use_cases.ShowSkipDialog;
+import com.youtube_v.domain.DownloadVideo;
+import com.youtube_v.domain.SavingManager;
+import com.youtube_v.domain.SizeFloatingActivity;
+import com.youtube_v.domain.VoiceSearch;
+import com.youtube_v.domain.SkipVideoTime;
 
 
 public class FloatingActivity extends AppCompatActivity {
@@ -85,7 +85,7 @@ public class FloatingActivity extends AppCompatActivity {
 
             finish();
         });
-        view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> ShowSkipDialog.skipThreeMinutes(webView));
+        view.findViewById(R.id.btnSkipTime).setOnClickListener(v -> SkipVideoTime.skipThreeMinutes(webView));
        // view.findViewById(R.id.btnSpeed).setOnClickListener(v -> SpeedPlayback.cyclePlaybackSpeed(speedBtn, webView, this));
         view.findViewById(R.id.btnLoop).setOnClickListener(v -> {
             isLooping = !isLooping;

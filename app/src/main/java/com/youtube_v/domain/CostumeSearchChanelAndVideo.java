@@ -1,4 +1,4 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 
-public class LookLastVideo {
+public class CostumeSearchChanelAndVideo {
 
     public static void showSearchChannel(Context context, WebView webView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

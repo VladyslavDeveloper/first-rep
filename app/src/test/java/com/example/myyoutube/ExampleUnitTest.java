@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import com.youtube_v.domain.myyoutube.SkipAd;
+import com.youtube_v.domain.SkipAd;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

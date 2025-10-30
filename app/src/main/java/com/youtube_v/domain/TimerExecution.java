@@ -1,8 +1,11 @@
-package com.youtube_v.domain.myyoutube;
+package com.youtube_v.domain;
 
 import android.content.Context;
 import android.os.Handler;
 import android.webkit.WebView;
+
+import com.youtube_v.domain.SavingManager;
+import com.youtube_v.domain.SkipAd;
 
 public class TimerExecution {
     public static Handler handler;
@@ -23,5 +26,4 @@ public class TimerExecution {
             }
         }, 1000);
     }
-
 }
