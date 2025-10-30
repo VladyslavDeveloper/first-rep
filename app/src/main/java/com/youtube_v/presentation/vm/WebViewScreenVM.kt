@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.webkit.WebView
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.youtube_v.domain.CostumeSearchChanelAndVideo
 import com.youtube_v.domain.JavaScriptExecutor
 import com.youtube_v.domain.SavingManager
 import com.youtube_v.domain.OpenFloatingActivity
@@ -20,6 +21,8 @@ class WebViewScreenVM @Inject constructor(
     private val savingManager: SavingManager,
     val timerExecution: TimerExecution,
     val skipVideoTime: SkipVideoTime,
+    val javaScriptExecutor: JavaScriptExecutor,
+    val costumeSearchChanelAndVideo: CostumeSearchChanelAndVideo,
     val prefs: SharedPreferences
 ) : ViewModel() {
 
@@ -38,7 +41,7 @@ class WebViewScreenVM @Inject constructor(
         speed = if (speed >= 3f) 1f else speed + 1f
         savingManager.savePlayBackSpeed(prefs, speed)
         speedPlaybackVideo.value = speed
-        JavaScriptExecutor.applyPlaybackSpeed(speed, webView)
+        javaScriptExecutor.applyPlaybackSpeed(speed, webView)
     }
 
     fun skipVideo(context: Context, webView: WebView) {
@@ -51,7 +54,7 @@ class WebViewScreenVM @Inject constructor(
     }
 
     fun subtitleMakeOf(webView: WebView) {
-        JavaScriptExecutor.makeSubtitleOf(webView)
+        javaScriptExecutor.makeSubtitleOf(webView)
     }
 
     var cycleVideo = mutableStateOf(false)
@@ -59,6 +62,9 @@ class WebViewScreenVM @Inject constructor(
 
     fun videoCycling(webView: WebView) {
         cycleVideo.value = !cycleVideo.value
-        JavaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
+        javaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
+    }
+    fun showSearchDialog(context: Context, webView: WebView){
+        costumeSearchChanelAndVideo.showSearchDialog(context, webView)
     }
 }

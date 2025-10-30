@@ -110,7 +110,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    CostumeSearchChanelAndVideo.showSearchDialog(activity, webViewRef)
+                    viewModel.showSearchDialog(context, webViewRef!!)
                 }) {
                     Text(text = "look up chanel")
                 }

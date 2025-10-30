@@ -8,7 +8,9 @@ import android.webkit.WebViewClient
 import com.youtube_v.domain.core.AppConstants
 import javax.inject.Inject
 
-class SavingManager @Inject constructor(){
+class SavingManager @Inject constructor(
+    val javaScriptExecutor: JavaScriptExecutor
+){
     fun initializeWebView(webView: WebView, context: Context) {
         val webSettings = webView.getSettings()
         webSettings.javaScriptEnabled = true
@@ -21,8 +23,8 @@ class SavingManager @Inject constructor(){
         webView.setWebViewClient(object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
                 super.onPageFinished(view, url)
-                JavaScriptExecutor.applyPlaybackSpeed(1f, webView)
-                JavaScriptExecutor.makeSubtitleOf(webView)
+                javaScriptExecutor.applyPlaybackSpeed(1f, webView)
+                javaScriptExecutor.makeSubtitleOf(webView)
             }
         })
         loadSavedURL(context, webView)
@@ -55,6 +57,6 @@ class SavingManager @Inject constructor(){
         val preferences =
             context.getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE)
         val playbackSpeed = preferences.getFloat(AppConstants.PREF_SPEED, 1.0f)
-        JavaScriptExecutor.applyPlaybackSpeed(playbackSpeed, webView)
+        javaScriptExecutor.applyPlaybackSpeed(playbackSpeed, webView!!)
     }
 }
