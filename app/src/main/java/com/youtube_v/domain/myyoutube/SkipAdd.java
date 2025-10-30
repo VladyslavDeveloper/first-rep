@@ -7,12 +7,10 @@ import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
-public class SkipaAdd {
-    private Context context;
+public class SkipAdd {
     private WebView webView;
 
-    public SkipaAdd(Context context, WebView webView) {
-        this.context = context;
+    public SkipAdd(WebView webView) {
         this.webView = webView;
 
     }

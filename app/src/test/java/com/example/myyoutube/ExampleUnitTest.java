@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import com.youtube_v.domain.myyoutube.SkipaAdd;
+import com.youtube_v.domain.myyoutube.SkipAdd;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -16,7 +16,7 @@ public class ExampleUnitTest {
     @Test
     public void setSkipaAdd(){
 
-        SkipaAdd skipaAdd = new SkipaAdd(null, null);
+        SkipAdd skipaAdd = new SkipAdd(null);
 
        // int result = skipaAdd.skipVideo();
 
