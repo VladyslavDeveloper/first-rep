@@ -22,12 +22,12 @@ class WebViewScreenVM @Inject constructor(
 
     var speedPlaybackVideo = mutableStateOf(1f)
 
-    fun initializePlaybackSpeed(context: Context) {
+    fun initializePlaybackSpeed() {
         var speed = prefs.getFloat("playback_speed", 1f)
         speedPlaybackVideo.value = speed
     }
 
-    fun setVideoSpeed(webView: WebView, context: Context) {
+    fun setVideoSpeed(webView: WebView) {
         var speed = prefs.getFloat("playback_speed", 1f)
 
         speed = if (speed >= 3f) 1f else speed + 1f

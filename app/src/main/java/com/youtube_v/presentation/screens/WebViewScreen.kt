@@ -39,7 +39,7 @@ fun WebViewScreen(
     val context = LocalContext.current
     val activity = LocalContext.current as Activity
 
-    viewModel.initializePlaybackSpeed(context)
+    viewModel.initializePlaybackSpeed()
 
     var cycleVideo by viewModel.cycleVideo
 
@@ -82,7 +82,7 @@ fun WebViewScreen(
 
             item {
                 Button(onClick = {
-                    viewModel.setVideoSpeed(webViewRef!!, context)
+                    viewModel.setVideoSpeed(webViewRef!!)
                 }) {
                     Text("speed video: ${viewModel.speedPlaybackVideo.value}")
                 }
