@@ -9,18 +9,22 @@ import com.youtube_v.domain.myyoutube.JavaScript
 import com.youtube_v.domain.use_cases.OpenFloatingActivity
 import com.youtube_v.domain.use_cases.ShowSkipDialog
 import com.youtube_v.domain.myyoutube.SpeedPlayback
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class WebViewScreenVM : ViewModel() {
+@HiltViewModel
+class WebViewScreenVM @Inject constructor() : ViewModel() {
     val url = "https://www.youtube.com"
     lateinit var showSkipDialog: ShowSkipDialog
 
     var speedPlaybackVideo = mutableStateOf(1f)
 
-    fun initializePlaybackSpeed(context: Context){
+    fun initializePlaybackSpeed(context: Context) {
         val prefs = context.getSharedPreferences("WebViewPrefs", Context.MODE_PRIVATE)
         var speed = prefs.getFloat("playback_speed", 1f)
         speedPlaybackVideo.value = speed
     }
+
     fun setVideoSpeed(webView: WebView, context: Context) {
         val prefs = context.getSharedPreferences("WebViewPrefs", Context.MODE_PRIVATE)
         var speed = prefs.getFloat("playback_speed", 1f)

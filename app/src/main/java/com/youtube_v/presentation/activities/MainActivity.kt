@@ -11,7 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import com.youtube_v.domain.myyoutube.VoiceSearch
 import com.youtube_v.presentation.navigation.AppNavGraph
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
