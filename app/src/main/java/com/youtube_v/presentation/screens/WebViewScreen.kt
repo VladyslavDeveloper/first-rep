@@ -92,7 +92,7 @@ fun WebViewScreen(
                 }
 
                 Button(onClick = {
-                    viewModel.openFloatingWindow(context, activity, webViewRef!!)
+                    viewModel.openFloatingWindow(context, activity)
                 }) {
                     Text("open window")
                 }

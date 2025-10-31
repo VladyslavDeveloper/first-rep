@@ -13,21 +13,21 @@ import com.youtube_v.presentation.activities.FloatingActivity;
 public class OpenFloatingActivity {
     private static final int REQUEST_CODE = 101;
 
-    public static void checkOverlayPermission(Context context, Activity activity, WebView webView) {
+    public static void checkOverlayPermission(Context context, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(context)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + context.getPackageName()));
                 activity.startActivityForResult(intent, REQUEST_CODE);
             } else {
-                startFloatingActivity(context, activity, webView);
+                startFloatingActivity(context, activity);
             }
         } else {
-            startFloatingActivity(context, activity, webView);
+            startFloatingActivity(context, activity);
         }
     }
 
-    private static void startFloatingActivity(Context context, Activity activity, WebView webView) {
+    private static void startFloatingActivity(Context context, Activity activity) {
         Intent intent = new Intent(context, FloatingActivity.class);
         context.startActivity(intent);
         activity.finish(); // Close MainActivity

@@ -48,9 +48,8 @@ class WebViewScreenVM @Inject constructor(
         skipVideoTime.showSkipTimeDialog(context, webView)
     }
 
-    fun openFloatingWindow(context: Context, activity: Activity, webView: WebView) {
-        OpenFloatingActivity.checkOverlayPermission(context, activity, webView)
-
+    fun openFloatingWindow(context: Context, activity: Activity) {
+        OpenFloatingActivity.checkOverlayPermission(context, activity)
     }
 
     fun subtitleMakeOf(webView: WebView) {
