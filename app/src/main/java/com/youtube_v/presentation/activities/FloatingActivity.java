@@ -1,12 +1,8 @@
 package com.youtube_v.presentation.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class FloatingActivity extends AppCompatActivity {
-    private LinearLayout linearLayout1;
+    private LinearLayout linearLayout_main;
     private WebView webView;
     private Button btnMove;
     private float dx, dy;
@@ -42,16 +38,12 @@ public class FloatingActivity extends AppCompatActivity {
         // Initialize WindowManager and LayoutParams
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
+                777,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, // для поверх других приложений
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
-
-        params.gravity = Gravity.TOP | Gravity.START;
-        params.x = 0;
-        params.y = 100;
 
         // Inflate the floating layout
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -60,7 +52,7 @@ public class FloatingActivity extends AppCompatActivity {
 
 
         // Initialize UI elements
-        linearLayout1 = view.findViewById(R.id.linearLayout1);
+        linearLayout_main = view.findViewById(R.id.linearLayout_main);
         webView = view.findViewById(R.id.webView);
         btnMove = view.findViewById(R.id.btnMove);
 
@@ -70,7 +62,6 @@ public class FloatingActivity extends AppCompatActivity {
         // Set button click listeners
         view.findViewById(R.id.btnClose).setOnClickListener(v -> {
             windowManager.removeView(view);
-
             finish();
         });
         view.findViewById(R.id.btnDownload).setOnClickListener(v -> DownloaderVideo.downloadCurrentVideo(this, webView));
@@ -84,7 +75,7 @@ public class FloatingActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                     params.x = (int) (e.getRawX() - dx);
                     params.y = (int) (e.getRawY() - dy);
-                    windowManager.updateViewLayout(linearLayout1, params);
+                    windowManager.updateViewLayout(view, params);
                     return true;
             }
             return false;
