@@ -52,6 +52,14 @@ class WebViewScreenVM @Inject constructor(
         OpenFloatingActivity.checkOverlayPermission(context, activity)
     }
 
+    fun fullScreenVideo(webView: WebView, isLandscape: Boolean) {
+        if (isLandscape) {
+            javaScriptExecutor.videoFullScreen(webView)
+        } else {
+            javaScriptExecutor.makeSubtitleOf(webView)
+        }
+    }
+
     fun subtitleMakeOf(webView: WebView) {
         javaScriptExecutor.makeSubtitleOf(webView)
     }
@@ -63,7 +71,8 @@ class WebViewScreenVM @Inject constructor(
         cycleVideo.value = !cycleVideo.value
         javaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
     }
-    fun showSearchDialog(context: Context, webView: WebView){
+
+    fun showSearchDialog(context: Context, webView: WebView) {
         costumeSearchChanelAndVideo.showSearchDialog(context, webView)
     }
 }

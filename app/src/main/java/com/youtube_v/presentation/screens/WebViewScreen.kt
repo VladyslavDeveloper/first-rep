@@ -1,6 +1,7 @@
 package com.youtube_v.presentation.screens
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -33,6 +35,9 @@ fun WebViewScreen(
     viewModel: WebViewScreenVM,
     onBack: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
 
     // ✅ Keep WebView reference across recompositions
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
@@ -61,14 +66,20 @@ fun WebViewScreen(
                     webChromeClient = WebChromeClient()
                     loadUrl(AppConstants.BASE_URL)
 
+                    viewModel.initializeContent(webViewRef!!, context)
                 }
             },
             update = { webView ->
-                viewModel.initializeContent(webView, context)
+                if (isLandscape) {
+                    viewModel.fullScreenVideo(webViewRef!!, true)
+                } else {
+                    viewModel.fullScreenVideo(webViewRef!!, false)
+                }
             },
             modifier = Modifier
                 .weight(1f)
         )
+
         LazyRow(
             modifier = Modifier
                 .heightIn(27.dp)
