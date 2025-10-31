@@ -23,11 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class FloatingActivity extends AppCompatActivity {
-    private LinearLayout linearLayout_main;
     private WebView webView;
     private Button btnMove;
     private float dx, dy;
-
 
     @SuppressLint({"MissingInflatedId", "ClickableViewAccessibility"})
     @Override
@@ -51,8 +49,6 @@ public class FloatingActivity extends AppCompatActivity {
         windowManager.addView(view, params);
 
 
-        // Initialize UI elements
-        linearLayout_main = view.findViewById(R.id.linearLayout_main);
         webView = view.findViewById(R.id.webView);
         btnMove = view.findViewById(R.id.btnMove);
 
