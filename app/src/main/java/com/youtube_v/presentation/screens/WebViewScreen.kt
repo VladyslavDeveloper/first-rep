@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +36,16 @@ fun WebViewScreen(
     viewModel: WebViewScreenVM,
     onBack: () -> Unit
 ) {
+    //isLandsCape
     val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var isLandscapeState by remember {
+        mutableStateOf(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+    }
 
+    // Обновляем состояние при смене ориентации
+    LaunchedEffect(configuration.orientation) {
+        isLandscapeState = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
 
     // ✅ Keep WebView reference across recompositions
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
@@ -70,60 +78,58 @@ fun WebViewScreen(
                 }
             },
             update = { webView ->
-                if (isLandscape) {
-                    viewModel.fullScreenVideo(webViewRef!!, true)
-                } else {
-                    viewModel.fullScreenVideo(webViewRef!!, false)
-                }
+                viewModel.fullScreenVideo(webViewRef!!, isLandscapeState)
             },
             modifier = Modifier
                 .weight(1f)
         )
 
-        LazyRow(
-            modifier = Modifier
-                .heightIn(27.dp)
-                .padding(0.dp, 0.dp, 0.dp, 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
+        if (!isLandscapeState) {
+            LazyRow(
+                modifier = Modifier
+                    .heightIn(27.dp)
+                    .padding(0.dp, 0.dp, 0.dp, 16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
 
 
-            item {
-                Button(onClick = {
-                    viewModel.setVideoSpeed(webViewRef!!)
-                }) {
-                    Text("speed video: ${viewModel.speedPlaybackVideo.value}")
-                }
+                item {
+                    Button(onClick = {
+                        viewModel.setVideoSpeed(webViewRef!!)
+                    }) {
+                        Text("speed video: ${viewModel.speedPlaybackVideo.value}")
+                    }
 
-                Button(onClick = {
-                    viewModel.skipVideo(context, webViewRef!!)
-                }) {
-                    Text("skip video")
-                }
+                    Button(onClick = {
+                        viewModel.skipVideo(context, webViewRef!!)
+                    }) {
+                        Text("skip video")
+                    }
 
-                Button(onClick = {
-                    viewModel.openFloatingWindow(context, activity)
-                }) {
-                    Text("open window")
-                }
+                    Button(onClick = {
+                        viewModel.openFloatingWindow(context, activity)
+                    }) {
+                        Text("open window")
+                    }
 
-                Button(onClick = {
-                    viewModel.videoCycling(webViewRef!!)
-                }) {
-                    Text("cycle video: ${if (cycleVideo) "on" else "of"}")
-                }
+                    Button(onClick = {
+                        viewModel.videoCycling(webViewRef!!)
+                    }) {
+                        Text("cycle video: ${if (cycleVideo) "on" else "off"}")
+                    }
 
-                VoiceSearchButton(webView = webViewRef!!)
+                    VoiceSearchButton(webView = webViewRef!!)
 
-                Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
-                    Text(text = "subtitle of")
-                }
+                    Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
+                        Text(text = "subtitle off")
+                    }
 
-                Button(onClick = {
-                    viewModel.showSearchDialog(context, webViewRef!!)
-                }) {
-                    Text(text = "look up chanel")
+                    Button(onClick = {
+                        viewModel.showSearchDialog(context, webViewRef!!)
+                    }) {
+                        Text(text = "look up chanel")
+                    }
                 }
             }
         }

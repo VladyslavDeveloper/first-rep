@@ -56,7 +56,7 @@ class WebViewScreenVM @Inject constructor(
         if (isLandscape) {
             javaScriptExecutor.videoFullScreen(webView)
         } else {
-            javaScriptExecutor.makeSubtitleOf(webView)
+            javaScriptExecutor.videoFullScreenCancel(webView)
         }
     }
 
