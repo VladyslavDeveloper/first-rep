@@ -10,15 +10,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FloatingScreenVM @Inject constructor(
-    val savingManager: SavingManager,
-    val skipVideoTime: SkipVideoTime
+    val savingManager: SavingManager
 ) : ViewModel() {
     fun initializeContent(webView: WebView, context: Context){
         // Setup WebView
         savingManager.initializeWebView(webView, context)
-    }
-
-    fun skipVideoTime(webView: WebView){
-        skipVideoTime.skipThreeMinutes(webView)
     }
 }

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.youtube_v.domain.CostumeSearchChanelAndVideo
 import com.youtube_v.domain.JavaScriptExecutor
 import com.youtube_v.domain.SavingManager
-import com.youtube_v.domain.OpenFloatingActivity
+import com.youtube_v.utils.OpenFloatingActivity
 import com.youtube_v.domain.SkipVideoTime
 import com.youtube_v.domain.TimerExecution
 import com.youtube_v.domain.core.AppConstants

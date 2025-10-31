@@ -1,4 +1,4 @@
-package com.youtube_v.domain;
+package com.youtube_v.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,10 +28,7 @@ public class OpenFloatingActivity {
     }
 
     private static void startFloatingActivity(Context context, Activity activity, WebView webView) {
-        String currentUrl = webView.getUrl(); // Get current URL from WebView
         Intent intent = new Intent(context, FloatingActivity.class);
-        intent.putExtra("video_url", currentUrl); // Pass URL in Intent
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
         activity.finish(); // Close MainActivity
     }
