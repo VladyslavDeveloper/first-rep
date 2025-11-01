@@ -25,7 +25,6 @@ fun AppNavGraph() {
         // MainMenu Screen
         composable("webViewScreen") {
             val viewModel: WebViewScreenVM = hiltViewModel()
-
             WebViewScreen(
                 viewModel = viewModel,
                 onBack = {}

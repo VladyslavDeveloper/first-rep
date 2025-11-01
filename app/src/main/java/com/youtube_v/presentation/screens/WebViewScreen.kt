@@ -6,12 +6,12 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -22,12 +22,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.youtube_v.domain.CostumeSearchChanelAndVideo
 import com.youtube_v.domain.core.AppConstants
+import com.youtube_v.presentation.screens.utils.ActionSpinner
 import com.youtube_v.presentation.screens.utils.VoiceSearchButton
 import com.youtube_v.presentation.vm.WebViewScreenVM
 
@@ -87,14 +88,13 @@ fun WebViewScreen(
         if (!isLandscapeState) {
             LazyRow(
                 modifier = Modifier
-                    .heightIn(27.dp)
-                    .padding(0.dp, 0.dp, 0.dp, 16.dp)
-                    .fillMaxWidth(),
+                    .heightIn(57.dp)
+                    .fillMaxWidth()
+                    .background(Color.Gray),
                 horizontalArrangement = Arrangement.Center
             ) {
-
-
                 item {
+
                     Button(onClick = {
                         viewModel.setVideoSpeed(webViewRef!!)
                     }) {
@@ -107,29 +107,15 @@ fun WebViewScreen(
                         Text("skip video")
                     }
 
-                    Button(onClick = {
-                        viewModel.openFloatingWindow(context, activity)
-                    }) {
-                        Text("open window")
-                    }
-
-                    Button(onClick = {
-                        viewModel.videoCycling(webViewRef!!)
-                    }) {
-                        Text("cycle video: ${if (cycleVideo) "on" else "off"}")
-                    }
-
                     VoiceSearchButton(webView = webViewRef!!)
 
-                    Button(onClick = { viewModel.subtitleMakeOf(webViewRef!!) }) {
-                        Text(text = "subtitle off")
-                    }
-
-                    Button(onClick = {
-                        viewModel.showSearchDialog(context, webViewRef!!)
-                    }) {
-                        Text(text = "look up chanel")
-                    }
+                    ActionSpinner(
+                        viewModel = viewModel,
+                        context = context,
+                        activity = activity,
+                        webViewRef = webViewRef,
+                        cycleVideo = cycleVideo
+                    )
                 }
             }
         }
