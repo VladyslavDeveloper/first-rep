@@ -26,7 +26,7 @@ class WebViewScreenVM @Inject constructor(
     val prefs: SharedPreferences
 ) : ViewModel() {
 
-    var speedPlaybackVideo = mutableStateOf(2f)
+    var speedPlaybackVideo = mutableStateOf(1f)
 
     fun initializeContent(webView: WebView, context: Context) {
         var speed = prefs.getFloat(AppConstants.PREF_SPEED, 1f)
