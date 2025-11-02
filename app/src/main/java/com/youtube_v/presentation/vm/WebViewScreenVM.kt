@@ -72,10 +72,6 @@ class WebViewScreenVM @Inject constructor(
         javaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
     }
 
-    fun cancelAdsBanner(webView: WebView) {
-        javaScriptExecutor.cancelAdsBanner(webView)
-    }
-
     fun showSearchDialog(context: Context, webView: WebView) {
         costumeSearchChanelAndVideo.showSearchDialog(context, webView)
     }
