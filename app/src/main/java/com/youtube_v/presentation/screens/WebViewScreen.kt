@@ -71,6 +71,7 @@ fun WebViewScreen(
                 WebView(context).apply {
                     webViewRef = this
                     settings.javaScriptEnabled = true
+
                     webViewClient = WebViewClient()
                     webChromeClient = WebChromeClient()
                     loadUrl(AppConstants.BASE_URL)

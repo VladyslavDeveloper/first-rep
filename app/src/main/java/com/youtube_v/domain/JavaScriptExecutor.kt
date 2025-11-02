@@ -1,12 +1,46 @@
 package com.youtube_v.domain
 
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import javax.inject.Inject
 
 class JavaScriptExecutor @Inject constructor() {
     ///////////////
     fun applyPlaybackSpeed(speed: Float, webView: WebView) {
         webView.evaluateJavascript("document.querySelector('video').playbackRate = $speed;", null)
+    }
+
+    ///////////////
+    fun cancelAdsBanner(webView: WebView){
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                view?.evaluateJavascript(
+                    """
+            (function() {
+                const adSelectors = [
+                    '.ytp-ad-module',
+                    '.ytp-ad-overlay-container',
+                    '.ytp-ad-player-overlay',
+                    '.ytp-ad-text',
+                    '.ytp-ad-skip-button-container',
+                    '.ytp-ad-image-overlay',
+                    '.ytp-ad-overlay-slot',
+                    '.ytp-ad-message-container',
+                    '.ytwPanelAdHeaderImageLockupViewModelHostHeaderMetadata'
+                ];
+
+                adSelectors.forEach(sel => {
+                    document.querySelectorAll(sel).forEach(el => {
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.opacity = '0';
+                    });
+                });
+            })();
+            """.trimIndent()
+                ) {}
+            }
+        }
     }
 
     ///////////////
