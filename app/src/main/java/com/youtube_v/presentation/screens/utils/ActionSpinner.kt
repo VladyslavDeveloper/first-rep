@@ -31,6 +31,7 @@ fun ActionSpinner(
     val items = mapOf(
         "open window" to { viewModel.openFloatingWindow(context, activity) },
         "cycle video: ${if (cycleVideo) "on" else "off"}" to { viewModel.videoCycling(webViewRef!!) },
+        "cancel ads banner" to {viewModel.cancelAdsBanner(webViewRef!!)},
         "subtitle off" to { viewModel.subtitleMakeOf(webViewRef!!) },
         "look up chanel" to { viewModel.showSearchDialog(context, webViewRef!!) }
     )

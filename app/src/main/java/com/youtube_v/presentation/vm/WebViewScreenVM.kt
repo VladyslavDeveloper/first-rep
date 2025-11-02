@@ -9,10 +9,10 @@ import androidx.lifecycle.ViewModel
 import com.youtube_v.domain.CostumeSearchChanelAndVideo
 import com.youtube_v.domain.JavaScriptExecutor
 import com.youtube_v.domain.SavingManager
-import com.youtube_v.utils.OpenFloatingActivity
 import com.youtube_v.domain.SkipVideoTime
 import com.youtube_v.domain.TimerExecution
 import com.youtube_v.domain.core.AppConstants
+import com.youtube_v.utils.OpenFloatingActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -70,6 +70,10 @@ class WebViewScreenVM @Inject constructor(
     fun videoCycling(webView: WebView) {
         cycleVideo.value = !cycleVideo.value
         javaScriptExecutor.cyclingVideo(webView, cycleVideo.value)
+    }
+
+    fun cancelAdsBanner(webView: WebView) {
+        javaScriptExecutor.cancelAdsBanner(webView)
     }
 
     fun showSearchDialog(context: Context, webView: WebView) {
