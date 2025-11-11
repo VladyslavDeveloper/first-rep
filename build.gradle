@@ -1,1 +1,1 @@
- apply plugin: 'application' mainClass = 'Server'
+plugins { id 'java' id 'application' } application { mainClass = 'Server' }
