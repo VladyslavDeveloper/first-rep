@@ -1,1 +1,1 @@
-public class Server { public static void main(String[] args) { System.out.println(Сервер работает!); } }
+java public class Server { public static void main(String[] args) { try { var server = java.net.http.HttpServer.create(new java.net.InetSocketAddress(8080), 0); server.createContext(/hi, e -> { e.sendResponseHeaders(200, 20); e.getResponseBody().write(Сервер жив!.getBytes()); e.close(); }); server.start(); System.out.println(На 8080 жду); } catch (Exception x) { x.printStackTrace(); } } }
