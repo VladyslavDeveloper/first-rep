@@ -1,0 +1,1 @@
+services: - type: web runtime: java buildCommand: javac Server.java startCommand: java Server
